@@ -1,6 +1,8 @@
 <template>
   <div class="w-full h-map">
+    <button @click="getDirection">Chỉ đường</button>
     <gmap-map
+      ref="map"
       @click="onClick"
       :center="center"
       @center_changed="updateCenter"
@@ -25,7 +27,6 @@
           v-for="(m, index) in markers"
           :position="m.position"
           @click="center=m.position"
-          :icon="icon"
         ></gmap-marker>
       </div>
       <gmap-custom-marker
@@ -187,6 +188,7 @@ export default {
         start,
         destination
       ) {
+        debugger;
         directionsService.route(
           {
             origin: start,
@@ -209,16 +211,17 @@ export default {
       calculateAndDisplayRoute(
         directionsService,
         directionsDisplay,
-        this.coords,
-        this.destination
+        "Bách khoa hà nội",
+        "102 ngõ 14 mễ trì hạ"
       );
     },
     //Phan giai vi tri
     geocode: function(address) {
       var geocoder = new google.maps.Geocoder();
-
+      var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0`;
       var promiseObj = new Promise(function(resolve, reject) {
         geocoder.geocode({ address: address }, function(results, status) {
+          console.log(results, status);
           if (status == google.maps.GeocoderStatus.OK) {
             resolve(results[0].geometry.location);
           } else {

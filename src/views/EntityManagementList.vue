@@ -7,7 +7,12 @@
         <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button>
         <vs-button color="#0BEC03" @click="Add" type="filled">Thêm mới</vs-button>
       </div>
-      <vs-table v-model="selected" multiple @selected="handleSelected" :data="data">
+      <vs-table
+        v-model="selected"
+        :multiple="data==null||data.length==0?false:true"
+        @selected="handleSelected"
+        :data="data"
+      >
         <template slot="thead">
           <vs-th>MÃ</vs-th>
           <vs-th>TÊN</vs-th>
@@ -43,7 +48,8 @@ export default {
   extends: BaseList,
   data() {
     return {
-      selected: []
+      selected: [],
+      data: []
     };
   },
 

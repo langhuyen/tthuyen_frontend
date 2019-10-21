@@ -14,7 +14,10 @@
         multiple
       />
     </div>
-    <google-map ref="google" />
+    <div>
+      caculatedDerection
+      <input ref="direction" type="file" id="input" @change="caculatedDerection" />
+    </div>
     <google-map ref="google" />
   </div>
 </template>
@@ -41,6 +44,23 @@ export default {
   },
 
   methods: {
+    caculatedDerection() {
+      let me = this;
+      axios
+        .get("./" + me.$refs.direction.files[0].name)
+        .then(function(resp) {
+          var nodes = resp.data.truckRoutes[0].routes[0].nodes;
+          for (var i = 0; i < nodes.length - 1; i++) {
+            me.$refs.google.getDirection(
+              nodes[i].locationCode,
+              nodes[i + 1].locationCode
+            );
+          }
+        })
+        .catch(err => {
+          console.log("err");
+        });
+    },
     sleep(millisecondsToWait) {
       var now = new Date().getTime();
       while (new Date().getTime() < now + millisecondsToWait) {

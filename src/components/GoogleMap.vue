@@ -6,18 +6,19 @@
       @click="onClick"
       :center="center"
       @center_changed="updateCenter"
-      :zoom="14"
+      :zoom="8"
       style="width:100%"
       class="h-map"
       :options="{
         zoomControl: true,
-        mapTypeControl: false,
+        mapTypeControl: true,
         scaleControl: true,
-        streetViewControl: false,
+        streetViewControl: true,
         rotateControl: true,
         fullscreenControl: true,
-        disableDefaultUi: false
+        disableDefaultUi: true
       }"
+      draggable
     >
       <div v-if="!isView">
         <gmap-marker
@@ -176,7 +177,7 @@ export default {
       this.center = marker;
     },
     //Chi duong
-    getDirection: function() {
+    getDirection: function(origin, destination) {
       var directionsService = new google.maps.DirectionsService();
       var directionsDisplay = new google.maps.DirectionsRenderer();
       directionsDisplay.setMap(this.$refs.map.$mapObject);
@@ -188,7 +189,6 @@ export default {
         start,
         destination
       ) {
-        debugger;
         directionsService.route(
           {
             origin: start,
@@ -204,15 +204,11 @@ export default {
           }
         );
       }
-
-      console.log(this.coords);
-      console.log(this.destination);
-      console.log("hmmm yha");
       calculateAndDisplayRoute(
         directionsService,
         directionsDisplay,
-        "Bách khoa hà nội",
-        "102 ngõ 14 mễ trì hạ"
+        origin,
+        destination
       );
     },
     //Phan giai vi tri

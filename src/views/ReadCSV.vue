@@ -18,7 +18,9 @@
       caculatedDerection
       <input ref="direction" type="file" id="input" @change="caculatedDerection" />
     </div>
-    <google-map ref="google" />
+    <google-map />
+
+    <!-- <google-map-component ref="google"></google-map-component> -->
   </div>
 </template>
 <script>
@@ -146,7 +148,7 @@ export default {
       // var geocoder = new google.maps.Geocoder();
       var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0`;
 
-      var geocoder = new google.maps.Geocoder();
+      // var geocoder = new google.maps.Geocoder();
       var promiseObj = new Promise(function(resolve, reject) {
         axios
           .get(url)

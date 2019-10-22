@@ -20,6 +20,10 @@
       }"
       draggable
     >
+      <gmap-polyline
+        v-bind:path.sync="path"
+        v-bind:options="{ stokeColor: '#FF0000',strokeWeight: 3}"
+      ></gmap-polyline>
       <div v-if="!isView">
         <gmap-marker
           @dragend="onDragend"
@@ -81,6 +85,7 @@ export default {
     }
 
     return {
+      path: [],
       icon: "./mooc.png",
       //mặc định là Montreal
       center: center,
@@ -176,8 +181,28 @@ export default {
       this.markers.push({ position: location });
       this.center = marker;
     },
+    creatRoad(directionResult) {
+      this.path = directionResult.routes[0].overview_path;
+      // var line = new google.maps.Polyline({
+      //   path: directionResult.routes[0].overview_path,
+      //   stokeColor: "#FF0000",
+      //   strokeWeight: 3
+      // });
+      // line.setMap(this.$refs.map.$mapObject);
+      // for (var i = 0; i < line.getPath().length; i++) {
+      //   var marker = new google.maps.Marker({
+      //     icon: {
+      //       path: google.maps.SymbolPath.CIRCLE,
+      //       scale: 3
+      //     },
+      //     position: line.getPath().getAt(i),
+      //     map: this.$refs.map.$mapObject
+      //   });
+      // }
+    },
     //Chi duong
     getDirection: function(origin, destination) {
+      let me = this;
       var directionsService = new google.maps.DirectionsService();
       var directionsDisplay = new google.maps.DirectionsRenderer();
       directionsDisplay.setMap(this.$refs.map.$mapObject);
@@ -198,6 +223,7 @@ export default {
           function(response, status) {
             if (status === "OK") {
               directionsDisplay.setDirections(response);
+              // me.creatRoad(response);
             } else {
               window.alert("Directions request failed due to " + status);
             }

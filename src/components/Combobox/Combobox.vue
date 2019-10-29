@@ -2,8 +2,8 @@
 
     <div class="t-input">
     <div class="t-title mb-8-px">{{title}}</div>
-      <vs-select noData="Không tìm thấy dữ liệu" v-model='valueCombox' autocomplete>
-        <vs-select-item v-for='item in datax' :text='item.text' :value='item.value'></vs-select-item>     
+      <vs-select :multiple="multiple" noData="Không tìm thấy dữ liệu" v-model='valueCombox' autocomplete>
+        <vs-select-item  v-for='item in datax' :text='item.text' :value='item.value'></vs-select-item>     
         </vs-select>
     </div>
 </template>
@@ -21,6 +21,10 @@ export default {
   },
   name: "Combobox",
   props: {
+    multiple: {
+      default: false,
+      type: Boolean
+    },
     title: {},
     value: {},
     /**{
@@ -86,6 +90,8 @@ export default {
 };
 </script>
 
- <<style scoped>
- 
- </style>
+ <style scoped>
+.con-select {
+  width: 100% !important;
+}
+</style>

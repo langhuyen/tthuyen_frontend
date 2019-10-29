@@ -34,6 +34,7 @@
         "eslint-plugin-vue": "^5.0.0",
         "sass": "^1.22.12",
         "sass-loader": "^8.0.0",
+        "vue-easytable": "^1.7.2",
         "vue-loader": "^15.7.1",
         "vue-template-compiler": "^2.6.10"
     },

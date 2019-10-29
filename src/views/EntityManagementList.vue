@@ -2,7 +2,7 @@
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
       <div class="main-title">Danh sách {{title}}</div>
-      <div class="t-button-wrap">
+      <div class="t-button-wrap mb-12-px">
         <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewAllMap()" type="border">Xem toàn cảnh</vs-button>
         <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button>
         <vs-button color="#0BEC03" @click="Add" type="filled">Thêm mới</vs-button>
@@ -22,11 +22,11 @@
 
         <template slot-scope="{data}">
           <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
-            <vs-td :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
+            <vs-td style="text-align:left" :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
 
-            <vs-td :data="data[indextr].name">{{ data[indextr].name }}</vs-td>
+            <vs-td style="text-align:left" :data="data[indextr].name">{{ data[indextr].name }}</vs-td>
 
-            <vs-td :data="data[indextr].address">{{ data[indextr].address }}</vs-td>
+            <vs-td style="text-align:left" :data="data[indextr].address">{{ data[indextr].address }}</vs-td>
 
             <vs-td>
               <a @click="Edit(tr)">Sửa</a> /

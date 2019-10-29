@@ -16,7 +16,15 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 var keyAPI = 'AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0'
 
+// import css
+import 'vue-easytable/libs/themes-base/index.css'
 
+// import table and pagination comp
+import { VTable, VPagination } from 'vue-easytable'
+
+// Register to global
+Vue.component(VTable.name, VTable)
+Vue.component(VPagination.name, VPagination)
 Vue.use(VueSidebarMenu)
 
 Vue.use(VueToast);

@@ -2,7 +2,7 @@
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
       <div class="main-title">Danh sách {{title}}</div>
-      <div class="t-button-wrap">
+      <div class="t-button-wrap mb-12-px">
         <vs-button color="#0BEC03" @click="Add" type="filled">Thêm mới</vs-button>
       </div>
       <vs-table class="scoll" v-model="selected" @selected="handleSelected" :data="data">
@@ -22,7 +22,7 @@
         <template slot-scope="{data}">
           <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
             <!-- <vs-td :data="data[indextr].code">{{ data[indextr].code }}</vs-td> -->
-            <vs-td :data="data[indextr].warehouse">
+            <vs-td style="text-align:left" :data="data[indextr].warehouse">
               <combobox
                 class="disabled"
                 v-model="data[indextr].warehouseCode"
@@ -32,7 +32,7 @@
                 fieldText="name"
               />
             </vs-td>
-            <vs-td v-if="isPort" :data="data[indextr].port">
+            <vs-td style="text-align:left" v-if="isPort" :data="data[indextr].port">
               <combobox
                 class="disabled"
                 v-model="data[indextr].portCode"
@@ -42,7 +42,7 @@
                 fieldText="name"
               />
             </vs-td>
-            <vs-td :data="data[indextr].containerTypeCode">
+            <vs-td style="text-align:left" :data="data[indextr].containerTypeCode">
               <combobox
                 class="disabled"
                 v-model="data[indextr].containerTypeCode"
@@ -53,13 +53,24 @@
                 fieldText="code"
               />
             </vs-td>
-            <vs-td :data="data[indextr].quantity">{{ data[indextr].quantity }}</vs-td>
-            <vs-td :data="data[indextr].quantity">{{ data[indextr].earlyPickupDateTime|formatDate }}</vs-td>
-            <vs-td :data="data[indextr].quantity">{{ data[indextr].latePickupDateTime|formatDate }}</vs-td>
             <vs-td
+              style="text-align:left"
+              :data="data[indextr].quantity"
+            >{{ data[indextr].quantity }}</vs-td>
+            <vs-td
+              style="text-align:left"
+              :data="data[indextr].quantity"
+            >{{ data[indextr].earlyPickupDateTime|formatDate }}</vs-td>
+            <vs-td
+              style="text-align:left"
+              :data="data[indextr].quantity"
+            >{{ data[indextr].latePickupDateTime|formatDate }}</vs-td>
+            <vs-td
+              style="text-align:left"
               :data="data[indextr].quantity"
             >{{ data[indextr].earlyDeliveryDateTime|formatDate }}</vs-td>
             <vs-td
+              style="text-align:left"
               :data="data[indextr].quantity"
             >{{ data[indextr].lateDeliveryDateTime|formatDate }}</vs-td>
 

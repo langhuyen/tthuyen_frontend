@@ -1,8 +1,8 @@
 <template>
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
-      <div class="main-title">Danh sách Container</div>
-      <div class="t-button-wrap">
+      <div class="main-title">Danh sách Mooc</div>
+      <div class="t-button-wrap mb-12-px">
         <vs-button color="#0BEC03" @click="Add()" type="filled">Thêm mới</vs-button>
       </div>
       <vs-table v-model="selected" multiple @selected="handleSelected" :data="data">
@@ -29,12 +29,42 @@
         <pre>{{ selected }}</pre>
       </vs-table>
     </div>
-    <vs-popup title="Thêm container" :active.sync="open">
+    <vs-popup title="Thêm Mooc" :active.sync="open">
       <div class="mb-12-px w-full">
-        <t-input v-model="entityData.code" title="Mã" />
+        <div class="flex">
+          <div class="w-1/3 mr-12-px">
+            <t-input v-model="entityData.code" title="Mã" />
+          </div>
+          <div class="w-1/3 mr-12-px">
+            <t-input v-model="entityData.name" title="Tên" />
+          </div>
+          <div class="w-1/3 mr-12-px">
+            <t-input type="number" v-model="entityData.weight" title="Trọng tải" />
+          </div>
+        </div>
       </div>
-      <div class="mb-12-px w-full">
-        <t-input v-model="entityData.name" title="Tên" />
+      <div class="mb-12-px flex w-full">
+        <div class="w-1/3 mr-12-px">
+          <combobox
+            multiple
+            v-model="entityData.returnDepotCodes"
+            title="Bãi chứa Mooc trả về"
+            isServer
+            urlPath="http://localhost:9000/entity/getType/:DEPOTTRAILER"
+            fieldValue="code"
+            fieldText="code"
+          />
+        </div>
+        <div class="w-1/3">
+          <combobox
+            v-model="entityData.depotLocationCode"
+            title="Bãi chứa Mooc"
+            isServer
+            urlPath="http://localhost:9000/entity/getType/:DEPOTTRAILER"
+            fieldValue="id"
+            fieldText="code"
+          />
+        </div>
       </div>
       <div class="t-button-wrap flex">
         <vs-button color="dark" class="mr-8-px" @click="Cancel" type="border">Hủy</vs-button>
@@ -61,7 +91,7 @@ export default {
     };
   },
   mounted() {
-    this.load("CONTAINER");
+    this.load("MOOC");
   },
 
   methods: {
@@ -82,7 +112,7 @@ export default {
     Add() {
       this.open = true;
       this.mode = Enum.Mode.Add;
-      this.entityData.type = "CONTAINER";
+      this.entityData.type = "MOOC";
     },
     AddAndClose() {
       var me = this;
@@ -96,7 +126,7 @@ export default {
                 color: "success",
                 position: "top-center"
               });
-              this.load("CONTAINER");
+              this.load("MOOC");
               this.open = false;
               me.entityData = {};
             } else {
@@ -114,7 +144,7 @@ export default {
           .then(result => {
             if (result.data.code == 0) {
               me.entityData = {};
-              this.load("CONTAINER");
+              this.load("MOOC");
               this.open = false;
             }
           });

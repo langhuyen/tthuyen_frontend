@@ -86,7 +86,24 @@ var api = {
                     // always executed
                 });
         });
-    }
+    },
+    post: function (url, Entity) {
+        return new Promise(function (resolve, reject) {
+            axios
+                .post(url, Entity)
+                .then(function (response) {
+                    // handle success
+                    resolve(response);
+                })
+                .catch(function (error) {
+                    // handle error
+                    reject(error);
+                })
+                .finally(function () {
+                    // always executed
+                });
+        });
+    },
 };
 
 export default api;

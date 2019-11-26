@@ -26,7 +26,7 @@
               
               <vs-button color="#c1c1c1" class='mr-8-px'  @click='Cancel' type="border">Hủy</vs-button>
               <vs-button color="#c1c1c1" class='mr-8-px'  @click='Add' type="border">Lưu Và Thêm mới</vs-button>
-              <vs-button color="#0BEC03" class='mr-8-px' @click='AddAndClose' type="filled">Lưu</vs-button>
+              <vs-button color="rgb(26, 115, 232)" class='mr-8-px' @click='AddAndClose' type="filled">Lưu</vs-button>
             </div>
         </div>
         <div class="right-content ">

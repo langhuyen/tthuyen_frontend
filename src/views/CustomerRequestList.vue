@@ -3,7 +3,7 @@
     <div class="h-content list-content p-12-px">
       <div class="main-title">Danh sách {{title}}</div>
       <div class="t-button-wrap mb-12-px">
-        <vs-button color="#0BEC03" @click="Add" type="filled">Thêm mới</vs-button>
+        <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
       </div>
       <vs-table class="scoll" v-model="selected" @selected="handleSelected" :data="data">
         <template slot="thead">
@@ -22,37 +22,19 @@
         <template slot-scope="{data}">
           <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
             <!-- <vs-td :data="data[indextr].code">{{ data[indextr].code }}</vs-td> -->
-            <vs-td style="text-align:left" :data="data[indextr].warehouse">
-              <combobox
-                class="disabled"
-                v-model="data[indextr].warehouseCode"
-                isServer
-                urlPath="http://localhost:9000/entity/getType/:WAREHOUSE"
-                fieldValue="id"
-                fieldText="name"
-              />
-            </vs-td>
-            <vs-td style="text-align:left" v-if="isPort" :data="data[indextr].port">
-              <combobox
-                class="disabled"
-                v-model="data[indextr].portCode"
-                isServer
-                urlPath="http://localhost:9000/entity/getType/:PORT"
-                fieldValue="id"
-                fieldText="name"
-              />
-            </vs-td>
-            <vs-td style="text-align:left" :data="data[indextr].containerTypeCode">
-              <combobox
-                class="disabled"
-                v-model="data[indextr].containerTypeCode"
-                disabled
-                isServer
-                urlPath="http://localhost:9000/entity/getType/:CONTAINER"
-                fieldValue="id"
-                fieldText="code"
-              />
-            </vs-td>
+            <vs-td
+              style="text-align:left"
+              :data="data[indextr].warehouse"
+            >{{data[indextr].warehouseCode[0].code}}</vs-td>
+            <vs-td
+              style="text-align:left"
+              v-if="isPort"
+              :data="data[indextr].port"
+            >{{data[indextr].portCode[0].code}}</vs-td>
+            <vs-td
+              style="text-align:left"
+              :data="data[indextr].containerTypeCode"
+            >{{data[indextr].containerCode[0].code}}</vs-td>
             <vs-td
               style="text-align:left"
               :data="data[indextr].quantity"

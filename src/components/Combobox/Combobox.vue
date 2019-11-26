@@ -2,7 +2,7 @@
 
     <div class="t-input">
     <div class="t-title mb-8-px">{{title}}</div>
-      <vs-select :multiple="multiple" noData="Không tìm thấy dữ liệu" v-model='valueCombox' autocomplete>
+      <vs-select @change="changeSelected()" :multiple="multiple" noData="Không tìm thấy dữ liệu"  v-model='valueCombox' autocomplete>
         <vs-select-item  v-for='item in datax' :text='item.text' :value='item.value'></vs-select-item>     
         </vs-select>
     </div>
@@ -82,6 +82,10 @@ export default {
     }
   },
   methods: {
+    changeSelected(data) {
+      debugger;
+      this.$emit("selected", data);
+    },
     generateText() {
       let me = this;
     }

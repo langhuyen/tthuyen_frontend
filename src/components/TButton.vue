@@ -31,7 +31,7 @@ export default {
   height: 36px;
   padding: 8px 20px;
   color: white;
-  background: #0bec03;
+  background: rgb(26, 115, 232);
   opacity: 0.6;
   border-radius: 3px;
   cursor: pointer;

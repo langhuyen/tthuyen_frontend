@@ -5,7 +5,7 @@
       <div class="t-button-wrap mb-12-px">
         <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewAllMap()" type="border">Xem toàn cảnh</vs-button>
         <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button>
-        <vs-button color="#0BEC03" @click="Add" type="filled">Thêm mới</vs-button>
+        <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
       </div>
       <vs-table
         v-model="selected"

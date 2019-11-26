@@ -3,9 +3,9 @@
     <div class="h-content list-content p-12-px">
       <div class="main-title">Danh sách Mooc</div>
       <div class="t-button-wrap mb-12-px">
-        <vs-button color="#0BEC03" @click="Add()" type="filled">Thêm mới</vs-button>
+        <vs-button color="rgb(26, 115, 232)" @click="Add()" type="filled">Thêm mới</vs-button>
       </div>
-      <vs-table v-model="selected" multiple @selected="handleSelected" :data="data">
+      <vs-table v-model="selected" @selected="handleSelected" :data="data">
         <template slot="thead">
           <vs-th>MÃ</vs-th>
           <vs-th>TÊN</vs-th>
@@ -29,7 +29,7 @@
         <pre>{{ selected }}</pre>
       </vs-table>
     </div>
-    <vs-popup title="Thêm Mooc" :active.sync="open">
+    <vs-popup @close="entityData={}" title="Thêm Mooc" :active.sync="open">
       <div class="mb-12-px w-full">
         <div class="flex">
           <div class="w-1/3 mr-12-px">
@@ -61,14 +61,14 @@
             title="Bãi chứa Mooc"
             isServer
             urlPath="http://localhost:9000/entity/getType/:DEPOTTRAILER"
-            fieldValue="id"
+            fieldValue="locationCode"
             fieldText="code"
           />
         </div>
       </div>
       <div class="t-button-wrap flex">
         <vs-button color="dark" class="mr-8-px" @click="Cancel" type="border">Hủy</vs-button>
-        <vs-button color="#0BEC03" class="mr-8-px" @click="AddAndClose" type="filled">Lưu</vs-button>
+        <vs-button color="rgb(26, 115, 232)" class="mr-8-px" @click="AddAndClose" type="filled">Lưu</vs-button>
       </div>
     </vs-popup>
   </div>
@@ -110,9 +110,20 @@ export default {
       this.entityData = {};
     },
     Add() {
+      let me = this;
       this.open = true;
       this.mode = Enum.Mode.Add;
+      this.entityData = {};
       this.entityData.type = "MOOC";
+      var url = "http://localhost:9000/AutoGenerateCode/:MOOC";
+      this.api.getAll(url).then(result => {
+        if (result.data.code == 0) {
+          me.entityData.code = result.data.data[0];
+          // me.entityData.address = result.data.data[0];
+        } else {
+          alert("Không tìm thấy thực thể");
+        }
+      });
     },
     AddAndClose() {
       var me = this;

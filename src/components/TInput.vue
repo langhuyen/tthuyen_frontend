@@ -33,7 +33,6 @@ export default {
   },
   watch: {
     value(val) {
-      debugger;
       this.valueInput = val;
     }
   },
@@ -66,6 +65,7 @@ export default {
   width: 100%;
   height: 32px;
   border: 1px solid #c1c1c1;
+  padding: 3px 10px;
 }
 .t-input-content::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
@@ -92,7 +92,7 @@ export default {
   color: #cccccc;
 }
 .t-input-focus {
-  border: 1px solid #0bec03;
+  border: 1px solid rgb(26, 115, 232);
   outline: none;
 }
 </style>

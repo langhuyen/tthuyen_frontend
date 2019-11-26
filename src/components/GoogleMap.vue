@@ -1,6 +1,5 @@
 <template>
   <div class="w-full h-map">
-    <button @click="getDirection">Chỉ đường</button>
     <gmap-map
       ref="map"
       @click="onClick"
@@ -20,10 +19,6 @@
       }"
       draggable
     >
-      <gmap-polyline
-        v-bind:path.sync="path"
-        v-bind:options="{ stokeColor: '#FF0000',strokeWeight: 3}"
-      ></gmap-polyline>
       <div v-if="!isView">
         <gmap-marker
           @dragend="onDragend"
@@ -240,7 +235,7 @@ export default {
     //Phan giai vi tri
     geocode: function(address) {
       var geocoder = new google.maps.Geocoder();
-      var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0`;
+      var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyBfFB0Xva7w9CWsrTxEneaLMgPlWQA8rXc`;
       var promiseObj = new Promise(function(resolve, reject) {
         geocoder.geocode({ address: address }, function(results, status) {
           console.log(results, status);

@@ -1,5 +1,5 @@
 .main-title {
-    color: #0BEC03;
+    color: rgb(26, 115, 232);
     size: 18px;
     font-weight: bold;
     margin: 16px 0px 20px 12px;
@@ -84,7 +84,7 @@
         width: 100%;
         background: white;
     }
-    .flex {
+    .row,.flex {
         display: flex;
     }
 }

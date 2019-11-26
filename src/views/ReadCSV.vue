@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="insertDB">InsertDB</button>
+    <button @click="test">ReadFileAndDisplay</button>
     <img :src="url" />
     <input type="file" ref="file" id="input" @change="test" multiple />
     <div>
@@ -18,9 +18,10 @@
       caculatedDerection
       <input ref="direction" type="file" id="input" @change="caculatedDerection" />
     </div>
-    <google-map />
-
-    <!-- <google-map-component ref="google"></google-map-component> -->
+    <!-- <google-map /> -->
+    <div style="height:600px; width:600px">
+      <google-map-component ref="google" @clickmarker="hello"></google-map-component>
+    </div>
   </div>
 </template>
 <script>
@@ -46,6 +47,33 @@ export default {
   },
 
   methods: {
+    hello(event, marker) {
+      console.log(event, marker);
+    },
+    test() {
+      axios
+        .get("http://localhost:9000/transport/hello")
+        .then(result => {
+          console.log(result);
+          var nodes = result.data[0].nodes;
+          for (var i = 0; i < nodes.length - 1; i++) {
+            var origin = nodes[i].address[0].address;
+            var des = nodes[i + 1].address[0].address;
+            console.log(origin);
+            // sleep(1000);
+            this.$refs.google.calcRoute(
+              origin,
+              des,
+              i + 1 + ". " + origin,
+              "#212121",
+              "mooc.png"
+            );
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     caculatedDerection() {
       let me = this;
       axios
@@ -192,7 +220,7 @@ export default {
           console.log(err);
         });
     },
-    test(input) {
+    testv2(input) {
       let me = this;
       var files = this.$refs.file.files;
       Object.keys(this.$refs.file.files).forEach(function(key) {

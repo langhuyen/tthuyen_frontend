@@ -14,7 +14,7 @@ import "@/assets/scss/common.scss"
 import 'material-icons/css/material-icons.scss';
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@fortawesome/fontawesome-free/js/all.js'
-var keyAPI = 'AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0'
+var keyAPI = 'AIzaSyBfFB0Xva7w9CWsrTxEneaLMgPlWQA8rXc'
 
 // import css
 import 'vue-easytable/libs/themes-base/index.css'

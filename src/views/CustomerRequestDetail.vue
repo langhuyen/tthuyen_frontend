@@ -13,7 +13,7 @@
                <div class='flex mb-12-px  '>
               <div v-if="isPort" class=" mr-8-px ">
                  
-                 <combobox   v-model="entityData.portCode" title='Cảng' isServer urlPath='http://localhost:9000/entity/getType/:PORT' fieldValue='id' fieldText='name'/>
+                 <combobox  @selected='selectedEvent'  v-model="entityData.portCode" title='Cảng' isServer urlPath='http://localhost:9000/entity/getType/:PORT' fieldValue='id' fieldText='name'/>
                
               </div>
               <div class="">
@@ -44,8 +44,7 @@
               <div class='flex mb-12-px '>
 
                   <div class="w-200-px mr-8-px">
-                    <combobox v-model="entityData.containerTypeCode" title='Loại container' isServer urlPath='http://localhost:9000/entity/getType/:CONTAINER' fieldValue='id' fieldText='code'/>
-               
+                    <combobox v-model="entityData.containerCode" title='Loại container' isServer urlPath='http://localhost:9000/instance/getType/:CONTAINER' fieldValue='id' fieldText='code'/>
                   </div>
                   <div class='w-200-px'>
 
@@ -56,8 +55,8 @@
               <div class="t-button-wrap">
                 
                 <vs-button color="dark" class='mr-8-px'  @click='Cancel' type="border">Hủy</vs-button>
-                <vs-button color="#0BEC03" class='mr-8-px'  @click='Add' type="border">Lưu Và Thêm mới</vs-button>
-                <vs-button color="#0BEC03" class='mr-8-px' @click='AddAndClose' type="filled">Lưu</vs-button>
+                <vs-button color="rgb(26, 115, 232)" class='mr-8-px'  @click='Add' type="border">Lưu Và Thêm mới</vs-button>
+                <vs-button color="rgb(26, 115, 232)" class='mr-8-px' @click='AddAndClose' type="filled">Lưu</vs-button>
               </div>
           </div>
           </div>
@@ -87,6 +86,11 @@ export default {
       code: "00102",
       latlng: { lat: 21.0278, lng: 105.8342 }
     };
+  },
+  methods: {
+    selectedEvent(data) {
+      console.log(data);
+    }
   }
 };
 </script>

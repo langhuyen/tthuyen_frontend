@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <!-- <router-view :key="$route.fullPath" /> -->
     <navigation />
     <div style="display:flex">
       <div style="width:200px">
@@ -13,13 +14,13 @@
 <script>
 import NavigationMenu from "@/layout/NavigationMenu";
 import Navigation from "@/layout/Navigation";
-import menu from './menu.js'
+import menu from "./menu.js";
 
 export default {
   name: "app",
   data() {
     return {
-      menu:menu
+      menu: menu
     };
   },
   components: {

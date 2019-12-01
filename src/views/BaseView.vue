@@ -17,6 +17,7 @@ export default {
           obj.position = item.latLng;
           obj.title = item.name;
           obj.type = item.type;
+          obj.content = item;
           me.marker.push(obj);
         }
       });

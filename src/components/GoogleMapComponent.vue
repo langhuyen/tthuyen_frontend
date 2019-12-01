@@ -57,10 +57,12 @@ export default {
   computed: {},
   created() {
     let me = this;
-    this.google = gmapsInit().then(() => {
+    gmapsInit().then(() => {
       me.map = new google.maps.Map(me.$refs.map, me.option);
-      me.map.setCenter(me.center);
-      me.createdMarker(me.center);
+      // me.map.setCenter(me.center);
+      // me.createdMarker(me.center);
+      me.$emit("ready");
+      // me.createdArrow();
       // this.map.addLis;
     });
     // var chicago = new this.google.maps.LatLng(41.850033, -87.6500523);
@@ -108,17 +110,17 @@ export default {
     createdMarker(position, iconurl, label, content, isDragable = false) {
       let me = this;
       var icon = null;
-      // if (iconurl) {
-      icon = {
-        url: "./" + iconurl
-        // This marker is 20 pixels wide by 32 pixels high.
-        // size: new google.maps.Size(50, 50)
-        // The origin for this image is (0, 0).
-        // origin: new google.maps.Point(0, 0),
-        // The anchor for this image is the base of the flagpole at (0, 32).
-        // anchor: new google.maps.Point(0, 32)
-      };
-      // }
+      if (iconurl) {
+        icon = {
+          url: "./" + iconurl,
+          // This marker is 20 pixels wide by 32 pixels high.
+          size: new google.maps.Size(50, 50)
+          // The origin for this image is (0, 0).
+          // origin: new google.maps.Point(0, 0),
+          // The anchor for this image is the base of the flagpole at (0, 32).
+          // anchor: new google.maps.Point(0, 32)
+        };
+      }
       // var text = {
       //   color: "#212121",
       //   fontSize: "12px",
@@ -126,12 +128,14 @@ export default {
       //   text: text,
       //   top: "-10px"
       // };
-      var infowindow = new google.maps.InfoWindow({
-        content: label,
-        color: "#c1c1c1",
-        fontSize: "8px",
-        fontWeight: "bold"
-      });
+      if (label) {
+        var infowindow = new google.maps.InfoWindow({
+          content: label,
+          color: "#c1c1c1",
+          fontSize: "8px",
+          fontWeight: "bold"
+        });
+      }
       let marker1 = new google.maps.Marker({
         position: position,
         map: this.map,
@@ -140,7 +144,7 @@ export default {
       });
       marker1.content = content;
       marker1.addListener("click", function(event) {
-        infowindow.open(this.map, marker1);
+        // infowindow.open(this.map, marker1);
         me.$emit("clickmarker", event, marker1);
       });
       marker1.addListener("dragend", function(event) {
@@ -148,6 +152,37 @@ export default {
       });
 
       return marker1;
+    },
+
+    //Hàm vẽ mũi tên chỉ đường
+    createdArrow(path, color) {
+      let me = this;
+      var lineSymbol = {
+        path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+        strokeColor: color,
+        fillColor: color,
+        scale: 2
+      };
+
+      var icons = [
+        {
+          icon: lineSymbol,
+          offset: "100%"
+        }
+      ];
+      // Create the polyline and add the symbol via the 'icons' property.
+      for (var i = 0; i < path.length; i++) {
+        var line = new google.maps.Polyline({
+          path: [path[i], path[i + 1]],
+
+          strokeColor: color
+        });
+        if ((i + 1) % 20 == 0) {
+          line.setOptions({ icons: icons });
+        }
+        line.setMap(me.map);
+        me.setCenter(path[i]);
+      }
     },
     /**
      * Lập lộ trình đi từ điểm A đến B,
@@ -167,22 +202,20 @@ export default {
       directionsDisplay.setMap(this.map);
       // directionsDisplay.setOption({});
       var request = {
-        origin: origin,
-        destination: destination,
+        origin: origin.lat + "," + origin.lng,
+        destination: destination.lat + "," + destination.lng,
         travelMode: "DRIVING"
       };
+
       directionsService.route(request, function(result, status) {
         if (status == "OK") {
           var _route = result.routes[0].legs[0];
           var path = result.routes[0].overview_path;
 
-          // me.createdMarker(_route.start_location, icon);
-          // me.createdMarker(_route.end_location, origin);
-          directionsDisplay.setDirections(result);
-          console.log(directionsDisplay.getDirections());
-          directionsDisplay.addListener("directions_changed", e => {
-            console.log(directionsDisplay.getDirections());
-          });
+          console.log(path[Math.ceil(path.length / 2)]);
+          // for (var i = 0; i < path.length; i++) {
+          me.createdArrow(path, color);
+          // }
         }
       });
     }

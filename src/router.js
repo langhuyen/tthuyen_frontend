@@ -16,13 +16,20 @@ import Login from '@/views/Login/Login.vue';
 import Register from '@/views/Login/Register.vue';
 import DisplayDirection from '@/views/DisplayDirection.vue';
 import ListTruckRouters from '@/views/ListTruckRouters.vue';
-
+import datatable from '@/components/TTable/Datatable'
 Vue.use(Router);
 export default new Router({
 
     mode: 'history',
     base: '/',
     pathToRegexOptions: { strict: true },
+    scrollBehavior: function (to) {
+        if (to.hash) {
+            return {
+                selector: to.hash
+            }
+        }
+    },
     routes: [
 
         {
@@ -106,6 +113,12 @@ export default new Router({
             path: "/ListTruckRouters",
             name: "ListTruckRouters",
             component: ListTruckRouters,
+            props: true
+        },
+        {
+            path: "/datatable",
+            name: "datatable",
+            component: datatable,
             props: true
         },
     ],

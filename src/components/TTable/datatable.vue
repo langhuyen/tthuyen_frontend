@@ -1,393 +1,197 @@
 <template>
-    <div class="datatable table-wrapper" :class="tableClasses">
-        <table>
-            <thead class="datatable-columns">
-                <tr>
-                    <th v-if="lineNumbers" :style="{ width: lineColumnWidth }">
-                        <div class="datatable-column datatable-linenumber-column">#</div>
-                    </th>
-                    <th v-if="aggregated">
-                        <div class="datatable-column datatable-aggregate-column">Aggregate</div>
-                    </th>
-                    <slot></slot>
-                </tr>
-            </thead>
-            <tbody class="datatable-groups" v-if="groupingColumnIds.length > 0">
-                <tr>
-                    <td class="datatable-groups-header" :colspan="columnSpan">
-                        <chip class="datatable-group-chip" v-for="(column, index) in groupingColumns" :key="column.id" @remove="degroupColumn(column)">
-                            <div>
-                                <small>
-                                    <strong>{{ index == 0 ? "Grouping By:" : "Then:" }}</strong>
-                                </small>
-                            </div>
-                            <div>{{ column.label }}</div>
-                        </chip>
-                    </td>
-                </tr>
-            </tbody>
-            <tbody class="datatable-collections" v-drag:enter="dragEnter" v-drag:leave="dragLeave" v-drag:over="dragOver" v-drag:drop="dragDrop">
-                <tr>
-                    <td class="datatable-group" :colspan="columnSpan">
-                        <datatable-collection 
-                            :rows="rows" 
-                            :columns="columns" 
-                            :striped="striped"
-                            :editable="editable"
-                            :line-numbers="lineNumbers"
-                            :aggregated="aggregated"
-                            :grouping-columns="groupingColumnIds"
-                            :margin="lineColumnWidth"
-                            :message="message">
-                        </datatable-collection>
-                    </td>
-                </tr>
-            </tbody>
-            <tfoot class="datatable-aggregators" v-if="aggregated">
-                <tr>
-                    <td class="datatable-info-cell" :colspan="columnSpan">&nbsp;</td>
-                </tr>
-                <tr v-for="(aggregator, index) in aggregators" :key="aggregator.label">
-                    <td v-if="lineNumbers" class="datatable-linenumber-cell">{{ index + 1 }}</td>
-                    <td v-if="aggregated" class="datatable-aggregate-cell">{{ aggregator.label }}</td>
-                    <td v-for="column in columns" :style="column.columnStyles">{{ aggregate(column, aggregator) }}</td>
-                </tr>
-            </tfoot>
-        </table>
-        <div class="datatable-options" layout="row center-justify" v-if="filterable">
-            <input type="text" placeholder="Filter this dataset. Press enter to search..." v-model.lazy="filter" self="size-x1" v-if="optimize">
-            <input type="text" placeholder="Filter this dataset..." v-model="filter" self="size-x1" v-else>
-        </div>
-    </div>
+  <div @scroll="handleScroll" class="datatable">
+    <table
+      id="example"
+      class="display nowrap dataTable dtr-inline collapsed"
+      style="width: 100%;"
+      role="grid"
+      aria-describedby="example_info"
+    >
+      <thead ref="thead">
+        <tr role="row tr-head">
+          <th
+            v-for="(col,key) in columnConfig"
+            :key="key"
+            :label="col.title"
+            class="sorting_asc align-left"
+            tabindex="0"
+            aria-controls="example"
+            rowspan="1"
+            colspan="1"
+            :style="{width: col.width}"
+            :class="col.textAlign?col.textAlign:'align-left'"
+            aria-sort="ascending"
+            aria-label="Name: activate to sort column descending"
+          >
+            {{col.title}}
+            <div class="resize" @mousedown.stop="onMouseDown"></div>
+          </th>
+          <th v-if="selected">
+            <vs-checkbox v-model="isSelectedAll" @change.stop="onChangeSelected(data)"></vs-checkbox>
+          </th>
+        </tr>
+      </thead>
+      <tbody ref="tbody">
+        <template v-for="(data,i) in datasource">
+          <tr role="row" :key="i+'-parent'" @click="onClickOpen" :class="i%2==0?'old':'even'">
+            <td
+              tabindex="0"
+              class="sorting_1"
+              :class="col.textAlign?col.textAlign:'align-left'"
+              v-for="(col,key) in columnConfig"
+              :key="key"
+            >{{data[col.dataField]}}</td>
+            <td v-if="selected">
+              <vs-checkbox v-model="isSelectedAll" @change.stop="onChangeSelected(data)" />
+            </td>
+          </tr>
+          <tr class="child hoa" style="display:none" :key="i+'-child'">
+            <td class="child" :colspan="selected?columnConfig.length+1:columnConfig.length">
+              <slot name="contentsub" :dataRow="data" />
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-    import DatatableCollection from "./datatable-collection.vue"; 
-    import filterBy from "../../utilities/filter-by.js";
-    import sortBy from "../../utilities/sort-by.js";
-    import { isCollection } from "../../utilities/base/type-validator.js";
+import TrTree from "./TrTree.vue";
+export default {
+  name: "Datatable",
 
-    export default {
-
-        props: {
-
-            fixed: {
-                type: Boolean,
-                default: true
-            },
-
-            striped: {
-                type: Boolean,
-                default: true
-            },
-
-            source: {
-                type: Array,
-                default: () => []
-            },
-
-            editable: {
-                type: Boolean,
-                default: false
-            },
-
-            filterable: {
-                type: Boolean,
-                default: true
-            },
-
-            lineNumbers: {
-                type: Boolean,
-                default: false
-            },
-
-            threshold: {
-                type: Number,
-                default: 50
-            },
-
-            message: {
-                type: String,
-                default: "No results"
-            }
-
-        },
-
-        data() {
-            return {
-                columns: [],
-                filter: null,
-                sortingId: null,
-                groupingColumnIds: [],
-                groupingDropzoneActive: false
-            };
-        },
-
-        computed: {
-
-            sortingColumn() {
-                return this.columns.find(column => column.id === this.sortingId);
-            },
-
-            groupingColumns() {
-                return this.groupingColumnIds.map(columnId => {
-                    return this.columns.find(column => column.id === columnId);
-                });
-            },
-
-            tableClasses() {
-                return {
-                    "datatable-editable": this.editable,
-                    "table-fixed": this.fixed
-                };
-            },
-
-            groupableColumns() {
-                return this.columns.filter(column => column.groupable);
-            },
-
-            rows() {
-
-                let rows = this.source;
-
-                // Filter the rows first to reduce the set (if a filter is supplied) we need to sort
-                if (this.filter) {
-                    rows = filterBy(rows, this.filter);
-                }
-
-                // Sort the filtered set
-                if (this.sortingColumn) {
-                    rows = sortBy(rows, row => row[this.sortingColumn.id], this.sortingColumn.sortingDirection);
-                }
-
-                return rows;
-            },
-
-            columnSpan() {
-                let columnSpan = this.columns.length;
-
-                if (this.lineNumbers) {
-                    columnSpan++
-                }
-
-                if (this.aggregated) {
-                    columnSpan ++
-                }
-
-                return columnSpan;
-            },
-
-            lineColumnWidth() {
-                let count = this.source.length;
-                return count.toString().length + 2 + "em";
-            },
-
-            aggregators() {
-                let aggregators = [];
-
-                for (let column of this.columns) {
-                    if (!column.aggregators) {
-                        continue;
-                    }
-
-                    aggregators = aggregators.concat(column.aggregators);
-                }
-                
-                return aggregators.filter((item, index, arr) => {
-                    return index === arr.indexOf(item);
-                });
-            },
-
-            aggregated() {
-                return this.aggregators && this.aggregators.length > 0;
-            },
-
-            optimize() {
-                return this.source.length >= this.threshold;
-            }
-
-        },
-
-        methods: {
-
-            addColumn(column) {
-                this.columns.push(column);
-            },
-
-            removeColumn(column) {
-                let index = this.columns.indexOf(column);
-                this.columns.splice(index, 1);
-            },
-
-            groupColumn(column) {
-                this.groupingColumnIds.push(column.id);
-            },
-
-            degroupColumn(column) {
-                let index = this.groupingColumnIds.indexOf(column.id);
-                this.groupingColumnIds.splice(index, 1);
-            },
-
-            aggregate(column, aggregator) {
-                const noResult = " ";
-
-                if (!column.aggregators || column.aggregators.indexOf(aggregator) === -1) {
-                    return noResult;
-                }
-
-                let result = aggregator.callback.call(column, this.rows, row => row[column.id]);
-                
-                if (!result || isCollection(result)) {
-                    return noResult;
-                }
-
-                return aggregator.format ? column.formatData(result) : result;
-            },
-
-            dragDrop(event) {
-                event.preventDefault();
-
-                let columnId = event.dataTransfer.getData("text");
-
-                let column = this.groupableColumns.find(item => {
-                    return item.id === columnId;
-                });
-
-                if (column && !column.grouping) {
-                    this.groupColumn(column);
-                }
-            },
-
-            dragOver(event) {
-                event.preventDefault();
-            },
-
-            dragEnter(event) {
-                event.preventDefault();
-                this.groupingDropzoneActive = true;
-            },
-
-            dragLeave(event) {
-                event.preventDefault();
-                this.groupingDropzoneActive = false;
-            }
- 
-        },
-
-        components: {
-            datatableCollection: DatatableCollection
-        }
-
+  components: { TrTree },
+  data() {
+    return {
+      parentEl: null,
+      currentPointer: 0,
+      currentWidth: 0
+    };
+  },
+  props: {
+    datasource: {
+      type: Array
+    },
+    columnConfig: {
+      type: Array
+    },
+    selected: {
+      type: Boolean,
+      default: true
     }
+  },
+  methods: {
+    /**
+     * Hàm xử lý
+     */
+    onChangeSelected(dataRow) {
+      console.log(dataRow);
+    },
+    onClickOpen(event) {
+      let el = event.currentTarget;
+      var sibling = el.nextSibling;
+      // .classList.contains("child");
+      //event.currentTarget.nextSibling.classList.add("child")
+      //event.currentTarget.nextSibling.classList.remove("child")
+      if (
+        sibling.classList.contains("child") &&
+        sibling.style.display != "none"
+      ) {
+        el.classList.remove("parent");
+        sibling.style.display = "none";
+      } else {
+        sibling.style.display = "table-row";
+        el.classList.add("parent");
+      }
+    },
+    onMouseDown(event) {
+      let me = this;
+      me.currentPointer = event.pageX;
+      me.parentEl = event.target.parentElement;
+      me.currentWidth = me.parentEl.offsetWidth;
+      document.addEventListener("mousemove", me.onMouseMove);
+    },
+    onMouseMove: function(event) {
+      let me = this;
+      me.resize(event);
+      document.addEventListener("mouseup", me.onMouseUp, true);
+    },
+    resize(event) {
+      let me = this;
+      let offset = me.currentWidth + (event.pageX - me.currentPointer);
+      if (me.parentEl != null) {
+        if (offset < 120) {
+          me.parentEl.style.width = 120 + "px";
+        } else {
+          me.parentEl.style.width =
+            me.currentWidth + (event.pageX - me.currentPointer) + "px";
+        }
+      }
+    },
+    onMouseUp() {
+      let me = this;
+      document.removeEventListener("mousemove", me.onMouseMove);
+      document.removeEventListener("mouseup", me.onMouseUp);
+      me.parentEl = null;
+      me.currentPointer = 0;
+    },
+    /**
+     * Hàm scroll table
+     */
+
+    handleScroll() {
+      var thead = this.$refs.thead;
+      var tbody = this.$refs.tbody;
+      if (
+        thead.offsetTop < this.$el.scrollTop &&
+        tbody.offsetTop + tbody.offsetHeight > this.$el.scrollTop
+      ) {
+        var tr = tbody.querySelectorAll("tr")[
+            tbody.querySelectorAll("tr").length - 1
+          ],
+          y =
+            tr.offsetTop - thead.offsetHeight < this.$el.scrollTop
+              ? tr.offsetTop - thead.offsetHeight - thead.offsetTop
+              : this.$el.scrollTop - thead.offsetTop;
+
+        thead.querySelectorAll("th").forEach(element => {
+          element.style.transform = "translateY(" + y + "px)";
+          element.style["-webkit-transform"] = "translateY(" + y + "px)";
+          element.style["z-index"] = 100;
+          element.style.background = "#ccc";
+        });
+      } else {
+        thead.querySelectorAll("th").forEach(element => {
+          element.style.transform = "none";
+          element.style["-webkit-transform"] = "none";
+          element.style.background = "#ccc";
+        });
+      }
+    }
+  },
+  mounted() {
+    let me = this;
+    window.addEventListener("mouseup", me.onMouseUp, true);
+  },
+  destroyed() {
+    let me = this;
+    window.removeEventListener("mouseup", me.onMouseUp);
+  },
+  computed: {}
+};
 </script>
 
-<style lang="scss">
-    @import "../../assets/styles/abstract/_variables.scss";
+<style lang="scss" >
+@import "@/assets/scss/datatable.scss";
+.datatable {
+  height: 100%;
+  overflow: auto;
+}
+</style>
 
-    .datatable {
-
-        & th {
-            padding: 0;
-        }
-    }
-
-    .datatable-linenumber-column,
-    .datatable-linenumber-cell {
-        text-align: center;
-    }
-
-    .datatable-linenumber-cell,
-    .datatable-aggregate-cell {
-        font-weight: 600; 
-        background-color: $colour-background-medium !important;
-        border-right-color: $colour-border;
-    }
-
-    .datatable-group-chip {
-        margin-right: 0.5rem;
-    }
-
-    .datatable-collection {
-
-        & .datatable-collection {
-
-            & .datatable-resultset {
-                border-top: 1px solid $colour-border;
-            }
-        }
-    }
-
-    .datatable-group {
-        padding: 0;
-        background-color: $colour-background;
-        border-bottom: 1px solid $colour-border;
-    }
-
-    .datatable-groups-header {
-        border-bottom: 1px solid $colour-border;
-    }
-
-    .datatable-group-header {
-        padding: 0.5rem 1rem;
-        background-color: $colour-background-medium;
-    }
-
-    .datatable-grouping-over {
-        box-shadow: 0 0 0 2px $colour-primary;
-    }
-
-    .datatable-row-indent {
-        display: inline-block;
-        width: 1.5rem;
-        height: 1em;
-    }
-
-    .datatable-group-label {
-        font-weight: 600;
-    }
-
-    .datatable-info-cell {
-        text-align: center;
-        font-weight: 600;
-    }
-
-    .datatable-aggregators {
-
-        & .datatable-info-cell  {
-            border-bottom: 1px solid $colour-border;
-        }
-    }
-
-    .datatable-options {
-        padding: 0.75rem 1rem;
-        background-color: $colour-background-medium;
-        border-top: 1px solid $colour-border;
-    }
-
-    .datatable-editable {
-
-        & .datatable-cell {
-            position: relative;
-            padding: 0 !important;
-            overflow: visible;
-
-            & input,
-            & select {
-                display: block;
-                width: 100%;
-                height: auto;
-                padding: 0.5rem 1rem;
-                background-color: transparent;
-                border: none;
-                border-radius: 0;
-
-                &:focus,
-                &:active {
-                    box-shadow: 0 0 0 2px $colour-primary;
-                }
-            }          
-        }
-    }
-
-
+<style >
+.tr-head {
+  background: #ccc;
+}
 </style>

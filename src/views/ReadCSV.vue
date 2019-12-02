@@ -1,28 +1,7 @@
 <template>
-  <div>
-    <button @click="test">ReadFileAndDisplay</button>
-    <img :src="url" />
-    <input type="file" ref="file" id="input" @change="test" multiple />
-    <div>
-      json
-      <input
-        type="file"
-        ref="fileJson"
-        id="input"
-        placeholder="Read file json"
-        @change="readJson"
-        multiple
-      />
-    </div>
-    <div>
-      caculatedDerection
-      <input ref="direction" type="file" id="input" @change="caculatedDerection" />
-    </div>
-    <!-- <google-map /> -->
-    <div style="height:600px; width:600px">
-      <google-map-component ref="google" @clickmarker="hello"></google-map-component>
-    </div>
-  </div>
+  <datatable :datasource="datasource" :columnConfig="column">
+    <template slot="contentsub" slot-scope="{ dataRow }">{{dataRow.name}}----</template>
+  </datatable>
 </template>
 <script>
 import Excel from "exceljs";
@@ -30,7 +9,9 @@ import { fs } from "fs";
 import readXlsxFile from "read-excel-file";
 import api from "@/api/DetailAPI";
 import axios from "axios";
+
 export default {
+  // components: [Datatable],
   data() {
     return {
       selected: [],
@@ -42,7 +23,114 @@ export default {
       markedContainerArr: [],
       markedWarehouseArr: [],
       markedTruckArr: [],
-      markedPortArr: []
+      markedPortArr: [],
+      column: [
+        {
+          title: "Name",
+          dataField: "name",
+          width: "100px"
+        },
+        {
+          title: "Position",
+          dataField: "position",
+          width: "100px"
+        },
+        {
+          title: "Office",
+          dataField: "office",
+          width: "100px"
+        },
+        {
+          title: "Office",
+          dataField: "office",
+          width: "100px"
+        },
+        {
+          title: "Office",
+          dataField: "office",
+          width: "100px"
+        },
+        {
+          title: "Age",
+          dataField: "age",
+          width: "100px",
+          textAlign: "align-right"
+        }
+      ],
+      datasource: [
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        },
+        {
+          name: "huyen",
+          position: "employee",
+          office: "BKA",
+          age: "21"
+        }
+      ]
     };
   },
 

@@ -3,10 +3,14 @@
     <!-- <router-view :key="$route.fullPath" /> -->
     <navigation />
     <div style="display:flex">
-      <div style="width:200px">
-        <sidebar-menu :menu="menu" />
+      <!-- <div> -->
+      <sidebar-menu ref="sidebar" :menu="menu" />
+      <!-- </div> -->
+      <div class="content-wrap-global">
+        <router-view />
+        <!-- <datatable /> -->
+        <!-- :key="$route.fullPath" /> -->
       </div>
-      <router-view :key="$route.fullPath" />
     </div>
   </div>
 </template>
@@ -23,9 +27,21 @@ export default {
       menu: menu
     };
   },
+  computed: {
+    width() {
+      // var v = this.$refs.sidebar;
+      // var sidebarWidth = v.sidebarWidth;
+      // return `cacl(100% - ${sidebarWidth})`;
+    }
+  },
   components: {
     NavigationMenu,
     Navigation
+  },
+  methods: {
+    handleScroll() {
+      alert("hhh");
+    }
   }
 };
 </script>
@@ -99,5 +115,35 @@ body {
 }
 .v-sidebar-menu .vsm--toggle-btn {
   // background-color: #11115b !important;
+}
+
+.content-wrap-global {
+  flex-grow: 1;
+  height: calc(100vh - 48px);
+  overflow-y: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(189, 205, 241);
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #00adb3;
+}
+body {
+  overflow: hidden;
 }
 </style>

@@ -699,7 +699,7 @@ legend {
 }
 
 .lbLoading {
-    background: #fff url(../images/slimbox/loading.gif) no-repeat center
+    // background: #fff url(../images/slimbox/loading.gif) no-repeat center
 }
 
 #lbImage {
@@ -723,7 +723,7 @@ legend {
 }
 
 #lbPrevLink:hover {
-    background: transparent url(../images/slimbox/prevlabel.gif) no-repeat 0 15%
+    // background: transparent url(../images/slimbox/prevlabel.gif) no-repeat 0 15%
 }
 
 #lbNextLink {
@@ -731,7 +731,7 @@ legend {
 }
 
 #lbNextLink:hover {
-    background: transparent url(../images/slimbox/nextlabel.gif) no-repeat 100% 15%
+    // background: transparent url(../images/slimbox/nextlabel.gif) no-repeat 100% 15%
 }
 
 #lbBottom {
@@ -749,7 +749,7 @@ legend {
     float: right;
     width: 66px;
     height: 22px;
-    background: transparent url(../images/slimbox/closelabel.gif) no-repeat center;
+    // background: transparent url(../images/slimbox/closelabel.gif) no-repeat center;
     margin: 5px 0;
     outline: none
 }
@@ -796,23 +796,23 @@ table.dataTable thead .sorting,table.dataTable thead .sorting_asc,table.dataTabl
 }
 
 table.dataTable thead .sorting {
-    background-image: url("../../../public/sort_both.png")
+    // background-image: url("../../../public/sort_both.png")
 }
 
 table.dataTable thead .sorting_asc {
-    background-image: url("../../../public/sort_asc.png")
+    // background-image: url("../../../public/sort_asc.png")
 }
 
 table.dataTable thead .sorting_desc {
-    background-image: url("../../../public//sort_desc.png")
+    // background-image: url("../../../public//sort_desc.png")
 }
 
 table.dataTable thead .sorting_asc_disabled {
-    background-image: url("../images/sort_asc_disabled.png")
+    // background-image: url("../images/sort_asc_disabled.png")
 }
 
 table.dataTable thead .sorting_desc_disabled {
-    background-image: url("../images/sort_desc_disabled.png")
+    // background-image: url("../images/sort_desc_disabled.png")
 }
 
 table.dataTable tbody tr {
@@ -1205,8 +1205,8 @@ table.dataTable,table.dataTable th,table.dataTable td {
 
 @font-face {
     font-family: 'ralewaythin';
-    src: url("../font/raleway_thin-webfont.eot");
-    src: url("../font/raleway_thin-webfont.eot?#iefix") format("embedded-opentype"),url("../font/raleway_thin-webfont.woff") format("woff"),url("../font/raleway_thin-webfont.ttf") format("truetype");
+    // src: url("../font/raleway_thin-webfont.eot");
+    // src: url("../font/raleway_thin-webfont.eot?#iefix") format("embedded-opentype"),url("../font/raleway_thin-webfont.woff") format("woff"),url("../font/raleway_thin-webfont.ttf") format("truetype");
     font-weight: normal;
     font-style: normal
 }
@@ -1249,7 +1249,7 @@ a {
 }
 
 p a[href^="http"]:not([href*="datatables.net"]) {
-    background: url(../images/external-site.gif) no-repeat right center;
+    // background: url(../images/external-site.gif) no-repeat right center;
     padding-right: 1em
 }
 
@@ -1608,7 +1608,7 @@ div.fw-nav ul span.ellipsis,div.fw-page-nav ul span.ellipsis {
 }
 
 div.fw-nav ul ul li.sub>a:after,div.fw-page-nav ul ul li.sub>a:after {
-    background: url(../images/nav-section.gif) no-repeat center center;
+    // background: url(../images/nav-section.gif) no-repeat center center;
     display: inline-block;
     content: ".";
     color: transparent;
@@ -2411,7 +2411,7 @@ div.index-features div.feature div.feature-icon {
     width: 220px;
     height: 65px;
     background-repeat: no-repeat;
-    background-image: url(/media/images/index-features.png)
+    // background-image: url(/media/images/index-features.png)
 }
 
 div.index-features div.feature div.title {
@@ -2841,7 +2841,7 @@ div.cdn>a.cdn-link {
     right: 11px;
     height: 9px;
     width: 9px;
-    background: url(../images/external-site.gif) no-repeat center center;
+    // background: url(../images/external-site.gif) no-repeat center center;
     background-color: #f9f9f9;
     padding: 3px;
     border: 1px solid #4d90fe;
@@ -3449,7 +3449,7 @@ div.news>div {
 }
 
 div.news>div.external a {
-    background: url(../images/external-site.gif) no-repeat right top
+    // background: url(../images/external-site.gif) no-repeat right top
 }
 
 div.news>div a {
@@ -3899,3 +3899,25 @@ div.dtr-modal div.dtr-modal-background {
 }
 
 /* spin cac o chua cas */
+
+.resize{
+        position: absolute;
+    height: 100%;
+    width: 1px;
+    right: 0px;
+    border-right: 1px solid #f9f9f9;
+    top: 0;
+}
+
+.resize:hover{
+        position: absolute;
+    height: 100%;
+    width: 1px;
+    right: 0px;
+    border-right: 1px solid #f9f9f9;
+    top: 0;
+    cursor: e-resize;
+}
+th{
+    position: relative;
+}

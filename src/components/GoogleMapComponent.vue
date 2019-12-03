@@ -22,36 +22,19 @@ option={
 -->
 <template>
   <div class="map" style="height:100%; width:100%" ref="map"></div>
-  <!-- <div class="infomation">
-      <div class="row mb-12-px">
-        <div class="title-info">Xuất phát:</div>
-        <div class="data-info">hà nội</div>
-      </div>
-      <div class="row mb-12-px">
-        <div class="title-info">Xuất phát:</div>
-        <div class="data-info">hà nội</div>
-      </div>
-      <div class="row mb-12-px">
-        <div class="title-info">Xuất phát:</div>
-        <div class="data-info">hà nội</div>
-      </div>
-      <div class="row mb-12-px">
-        <div class="title-info">Xuất phát:</div>
-        <div class="data-info">hà nội</div>
-      </div>
-  </div>-->
-  <!-- ] -->
 </template>
 
 <script>
 import { gmapApi } from "vue2-google-maps";
 import gmapsInit from "./gmaps";
+import USGSOverlay from "./USGSOverlay.js";
 export default {
   name: "GoogleMapComponent",
   data() {
     return {
       map: null,
-      google: null
+      google: null,
+      overlay: null
     };
   },
   computed: {},
@@ -59,11 +42,54 @@ export default {
     let me = this;
     gmapsInit().then(() => {
       me.map = new google.maps.Map(me.$refs.map, me.option);
-      // me.map.setCenter(me.center);
-      // me.createdMarker(me.center);
-      me.$emit("ready");
-      // me.createdArrow();
-      // this.map.addLis;
+      // // me.createdMarker(me.center, "@/../public/mooc.png");
+      // var marker = me.createdMarker(me.center, null);
+      me.map.setCenter(me.center);
+      // me.$emit("ready");
+      // USGSOverlay.prototype = new google.maps.OverlayView();
+      // var bounds = new google.maps.LatLngBounds(
+      //   new google.maps.LatLng(21.0228161, 105.801944),
+      //   new google.maps.LatLng(21.0228161, 105.801944)
+      // );
+      // // InfoWindow content
+      // var content =
+      //   '<div ref="refid" class="iw-container">' +
+      //   '<a href="https://developer.mozilla.org/vi/docs/Web/JavaScript/Reference/Classes" class="iw-title">Porcelain Factory of Vista Alegre</a>' +
+      //   '<div class="iw-content">' +
+      //   '<div class="iw-subTitle">History</div>' +
+      //   '<img src="http://maps.marnoto.com/en/5wayscustomizeinfowindow/images/vistalegre.jpg" alt="Porcelain Factory of Vista Alegre" height="115" width="83">' +
+      //   '<p>Founded in 1824, the Porcelain Factory of Vista Alegre was the first industrial unit dedicated to porcelain production in Portugal. For the foundation and success of this risky industrial development was crucial the spirit of persistence of its founder, José Ferreira Pinto Basto. Leading figure in Portuguese society of the nineteenth century farm owner, daring dealer, wisely incorporated the liberal ideas of the century, having become "the first example of free enterprise" in Portugal.</p>' +
+      //   '<div class="iw-subTitle">Contacts</div>' +
+      //   "<p>VISTA ALEGRE ATLANTIS, SA<br>3830-292 Ílhavo - Portugal<br>" +
+      //   "<br>Phone. +351 234 320 600<br>e-mail: geral@vaa.pt<br>www: www.myvistaalegre.com</p>" +
+      //   "</div>" +
+      //   '<div class="iw-bottom-gradient"></div>' +
+      //   "</div>";
+
+      // // A new Info Window is created and set content
+      // var infowindow = new google.maps.InfoWindow({
+      //   content: content,
+
+      //   // Assign a maximum value for the width of the infowindow allows
+      //   // greater control over the various content elements
+      //   maxWidth: 350
+      // });
+      // google.maps.event.addListener(marker, "click", function() {
+      //   infowindow.open(me.map, marker);
+      //   me.$nextTick(function() {
+      //     var infoDiv = document.querySelectorAll(".iw-container");
+      //     infoDiv.forEach(el =>
+      //       el.addEventListener("click", function() {
+      //         alert("haa");
+      //       })
+      //     );
+      //   });
+      // });
+
+      // var srcImage =
+      //   "https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwixsK3k_ZbmAhV_yosBHST_BbwQjRx6BAgBEAQ&url=https%3A%2F%2Fhinhanhdephd.com%2Fmeo-con-dep-voi-nhung-anh-nen-meo-con-de-thuong%2F&psig=AOvVaw2oPfl0sKeXkRAEbyJrJM6d&ust=1575376729329058";
+
+      // me.overlay = new USGSOverlay(bounds, srcImage, me.map);
     });
     // var chicago = new this.google.maps.LatLng(41.850033, -87.6500523);
     // this.calcRoute();
@@ -73,18 +99,25 @@ export default {
     option: {
       type: Object,
       default: () => ({
-        zoom: 15
+        zoom: 9
       })
     },
+    //21.0228161,105.801944
     center: {
       type: Object,
-      default: () => ({
-        lat: 10.173007011413574,
-        lng: 105.93197631835938
-      })
+      default: () => ({ lat: 21.0228161, lng: 105.801944 })
     }
   },
   methods: {
+    /**
+     * Tao infowindow custom
+     */
+    createdInfoWindow() {
+      google.maps.event.addListener(map, "click", function() {
+        infowindow.close();
+      });
+    },
+
     /**
      * Xử lý lắng nghe sự kiện
      */
@@ -113,12 +146,7 @@ export default {
       if (iconurl) {
         icon = {
           url: "./" + iconurl,
-          // This marker is 20 pixels wide by 32 pixels high.
           size: new google.maps.Size(50, 50)
-          // The origin for this image is (0, 0).
-          // origin: new google.maps.Point(0, 0),
-          // The anchor for this image is the base of the flagpole at (0, 32).
-          // anchor: new google.maps.Point(0, 32)
         };
       }
       // var text = {

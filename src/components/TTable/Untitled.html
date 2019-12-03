@@ -1,247 +1,171 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
+
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="datatable.css">
+    <meta charset="utf-8">
+    <title>InfoBubble Example</title>
+
+    <style>
+        #map-canvas {
+            margin: 0;
+            padding: 0;
+            height: 400px;
+            max-width: none;
+        }
+
+        #map-canvas img {
+            max-width: none !important;
+        }
+
+        .gm-style-iw {
+            width: 350px !important;
+            top: 15px !important;
+            left: 0px !important;
+            background-color: #fff;
+            box-shadow: 0 1px 6px rgba(178, 178, 178, 0.6);
+            border: 1px solid rgba(72, 181, 233, 0.6);
+            border-radius: 2px 2px 10px 10px;
+        }
+
+        #iw-container {
+            margin-bottom: 10px;
+        }
+
+        #iw-container .iw-title {
+            font-family: 'Open Sans Condensed', sans-serif;
+            font-size: 22px;
+            font-weight: 400;
+            padding: 10px;
+            background-color: #48b5e9;
+            color: white;
+            margin: 0;
+            border-radius: 2px 2px 0 0;
+        }
+
+        #iw-container .iw-content {
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 400;
+            margin-right: 1px;
+            padding: 15px 5px 20px 15px;
+            max-height: 140px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .iw-content img {
+            float: right;
+            margin: 0 5px 5px 10px;
+        }
+
+        .iw-subTitle {
+            font-size: 16px;
+            font-weight: 700;
+            padding: 5px 0;
+        }
+
+        .iw-bottom-gradient {
+            position: absolute;
+            width: 326px;
+            height: 25px;
+            bottom: 10px;
+            right: 18px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+        }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfFB0Xva7w9CWsrTxEneaLMgPlWQA8rXc"></script>
+    <script>
+        var script = '<script src="../src/infobubble';
+        if (document.location.search.indexOf('compiled') !== -1) {
+            script += '-compiled';
+        }
+        script += '.js"><' + '/script>';
+        document.write(script);
+    </script>
+    <script>
+        /*
+       * 5 ways to customize the Google Maps infowindow
+       * 2015 - en.marnoto.com
+       * http://en.marnoto.com/2014/09/5-formas-de-personalizar-infowindow.html
+      */
+
+        // map center
+        var center = new google.maps.LatLng(40.589500, -8.683542);
+
+        // marker position
+        var factory = new google.maps.LatLng(40.589500, -8.683542);
+
+        function initialize() {
+            var mapOptions = {
+                center: center,
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+
+            // InfoWindow content
+            var content = '<div id="iw-container">' +
+                '<a href="https://developer.mozilla.org/vi/docs/Web/JavaScript/Reference/Classes" class="iw-title">Porcelain Factory of Vista Alegre</a>' +
+                '<div class="iw-content">' +
+                '<div class="iw-subTitle">History</div>' +
+                '<img src="http://maps.marnoto.com/en/5wayscustomizeinfowindow/images/vistalegre.jpg" alt="Porcelain Factory of Vista Alegre" height="115" width="83">' +
+                '<p>Founded in 1824, the Porcelain Factory of Vista Alegre was the first industrial unit dedicated to porcelain production in Portugal. For the foundation and success of this risky industrial development was crucial the spirit of persistence of its founder, José Ferreira Pinto Basto. Leading figure in Portuguese society of the nineteenth century farm owner, daring dealer, wisely incorporated the liberal ideas of the century, having become "the first example of free enterprise" in Portugal.</p>' +
+                '<div class="iw-subTitle">Contacts</div>' +
+                '<p>VISTA ALEGRE ATLANTIS, SA<br>3830-292 Ílhavo - Portugal<br>' +
+                '<br>Phone. +351 234 320 600<br>e-mail: geral@vaa.pt<br>www: www.myvistaalegre.com</p>' +
+                '</div>' +
+                '<div class="iw-bottom-gradient"></div>' +
+                '</div>';
+
+            // A new Info Window is created and set content
+            var infowindow = new google.maps.InfoWindow({
+                content: content,
+
+                // Assign a maximum value for the width of the infowindow allows
+                // greater control over the various content elements
+                maxWidth: 350
+            });
+
+            // marker options
+            var marker = new google.maps.Marker({
+                position: factory,
+                map: map,
+                title: "Porcelain Factory of Vista Alegre"
+            });
+
+            // This event expects a click on a marker
+            // When this event is fired the Info Window is opened.
+            google.maps.event.addListener(marker, 'click', function () {
+                infowindow.open(map, marker);
+            });
+
+            // Event that closes the Info Window with a click on the map
+            google.maps.event.addListener(map, 'click', function () {
+                infowindow.close();
+            });
+
+            // *
+            // START INFOWINDOW CUSTOMIZE.
+            // The google.maps.event.addListener() event expects
+            // the creation of the infowindow HTML structure 'domready'
+            // and before the opening of the infowindow, defined styles are applied.
+            // *
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
 </head>
 
 <body>
 
-    <div class="scrollingtable">
-        <div>
-            <div>
+    <body>
+        <div id="map-canvas" />
+    </body>
 
-                <table id="example" class="display nowrap dataTable dtr-inline collapsed" style="width: 100%;"
-                    role="grid" aria-describedby="example_info">
-                    <thead>
-                        <tr role="row">
-                            <th label="Name" class="sorting_asc" tabindex="0" aria-controls="example" rowspan="1"
-                                colspan="1" style="width: 105px;" aria-sort="ascending"
-                                aria-label="Name: activate to sort column descending">
-                                Name
-                                <div class="resize"></div>
-                            </th>
-                            <th label="Position" class="sorting" tabindex="0" aria-controls="example" rowspan="1"
-                                colspan="1" style="width: 170px;"
-                                aria-label="Position: activate to sort column ascending">Position
-                                <div class="resize"></div>
-                            </th>
-                            <th label="Office" class="sorting" tabindex="0" aria-controls="example" rowspan="1"
-                                colspan="1" style="width: 77px;" aria-label="Office: activate to sort column ascending">
-                                Office
-                                <div class="resize"></div>
-                            </th>
-                            <th label='Age' class="dt-body-right sorting" tabindex="0" aria-controls="example"
-                                rowspan="1" colspan="1" style="width: 28px;"
-                                aria-label="Age: activate to sort column ascending">Age
-                                <div class="resize"></div>
-                            </th>
-                            <th label='Start date' class="sorting" tabindex="0" aria-controls="example" rowspan="1"
-                                colspan="1" style="width: 67px; display: none;"
-                                aria-label="Start date: activate to sort column ascending">
-                                Start Date <div class="resize"></div>
-                            </th>
-                            <th label='Salary' class="dt-body-right sorting" tabindex="0" aria-controls="example"
-                                rowspan="1" colspan="1" style="width: 0px; display: none;"
-                                aria-label="Salary: activate to sort column ascending">Salary
-                                <div class="resize"></div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr role="row" class="odd">
-                            <td tabindex="0" class="sorting_1">Airi Satou</td>
-                            <td>Accountant</td>
-                            <td>Tokyo</td>
-                            <td class=" dt-body-right">33</td>
-                            <td style="display: none;">2008/11/28</td>
-                            <td class=" dt-body-right" style="display: none;">$162,700</td>
-                        </tr>
-                        <tr role="row" class="even">
-                            <td class="sorting_1" tabindex="0">Angelica Ramos</td>
-                            <td>Chief Executive Officer (CEO)</td>
-                            <td>London</td>
-                            <td class=" dt-body-right">47</td>
-                            <td style="display: none;">2009/10/09</td>
-                            <td class=" dt-body-right" style="display: none;">$1,200,000</td>
-                        </tr>
-                        <tr role="row" class="odd parent">
-                            <td tabindex="0" class="sorting_1" style="">Ashton Cox</td>
-                            <td>Junior Technical Author</td>
-                            <td>San Francisco</td>
-                            <td class=" dt-body-right">66</td>
-                            <td style="display: none;">2009/01/12</td>
-                            <td class=" dt-body-right" style="display: none;">$86,000</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="2" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="2" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2009/01/12</span></li>
-                                    <li data-dtr-index="5" data-dt-row="2" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$86,000</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="even parent">
-                            <td class="sorting_1" tabindex="0" style="">Bradley Greer</td>
-                            <td>Software Engineer</td>
-                            <td>London</td>
-                            <td class=" dt-body-right">41</td>
-                            <td style="display: none;">2012/10/13</td>
-                            <td class=" dt-body-right" style="display: none;">$132,000</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="18" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="18" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2012/10/13</span></li>
-                                    <li data-dtr-index="5" data-dt-row="18" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$132,000</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="odd parent">
-                            <td class="sorting_1" tabindex="0" style="">Brenden Wagner</td>
-                            <td>Software Engineer</td>
-                            <td>San Francisco</td>
-                            <td class=" dt-body-right">28</td>
-                            <td style="display: none;">2011/06/07</td>
-                            <td class=" dt-body-right" style="display: none;">$206,850</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="27" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="27" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2011/06/07</span></li>
-                                    <li data-dtr-index="5" data-dt-row="27" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$206,850</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="even parent">
-                            <td tabindex="0" class="sorting_1" style="">Brielle Williamson</td>
-                            <td>Integration Specialist</td>
-                            <td>New York</td>
-                            <td class=" dt-body-right">61</td>
-                            <td style="display: none;">2012/12/02</td>
-                            <td class=" dt-body-right" style="display: none;">$372,000</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="5" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="5" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2012/12/02</span></li>
-                                    <li data-dtr-index="5" data-dt-row="5" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$372,000</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="odd parent">
-                            <td class="sorting_1" tabindex="0" style="">Bruno Nash</td>
-                            <td>Software Engineer</td>
-                            <td>London</td>
-                            <td class=" dt-body-right">38</td>
-                            <td style="display: none;">2011/05/03</td>
-                            <td class=" dt-body-right" style="display: none;">$163,500</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="42" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="42" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2011/05/03</span></li>
-                                    <li data-dtr-index="5" data-dt-row="42" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$163,500</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="even parent">
-                            <td class="sorting_1" tabindex="0" style="">Caesar Vance</td>
-                            <td>Pre-Sales Support</td>
-                            <td>New York</td>
-                            <td class=" dt-body-right">21</td>
-                            <td style="display: none;">2011/12/12</td>
-                            <td class=" dt-body-right" style="display: none;">$106,450</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="22" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="22" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2011/12/12</span></li>
-                                    <li data-dtr-index="5" data-dt-row="22" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$106,450</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="odd parent">
-                            <td class="sorting_1" tabindex="0" style="">Cara Stevens</td>
-                            <td>Sales Assistant</td>
-                            <td>New York</td>
-                            <td class=" dt-body-right">46</td>
-                            <td style="display: none;">2011/12/06</td>
-                            <td class=" dt-body-right" style="display: none;">$145,600</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="50" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="50" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2011/12/06</span></li>
-                                    <li data-dtr-index="5" data-dt-row="50" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$145,600</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr role="row" class="even parent">
-                            <td tabindex="0" class="sorting_1" style="">Cedric Kelly</td>
-                            <td>Senior Javascript Developer</td>
-                            <td>Edinburgh</td>
-                            <td class=" dt-body-right">22</td>
-                            <td style="display: none;">2012/03/29</td>
-                            <td class=" dt-body-right" style="display: none;">$433,060</td>
-                        </tr>
-                        <tr class="child">
-                            <td class="child" colspan="4">
-                                <ul data-dtr-index="3" class="dtr-details">
-                                    <li data-dtr-index="4" data-dt-row="3" data-dt-column="4"><span
-                                            class="dtr-title">Start
-                                            date</span>
-                                        <span class="dtr-data">2012/03/29</span></li>
-                                    <li data-dtr-index="5" data-dt-row="3" data-dt-column="5"><span
-                                            class="dtr-title">Salary</span>
-                                        <span class="dtr-data">$433,060</span></li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>

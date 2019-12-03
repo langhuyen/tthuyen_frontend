@@ -3898,6 +3898,9 @@ div.dtr-modal div.dtr-modal-background {
     }
 }
 
+
+
+
 /* spin cac o chua cas */
 
 .resize{
@@ -3915,4 +3918,16 @@ div.dtr-modal div.dtr-modal-background {
 }
 th{
     position: relative;
+}
+
+div#example_paginate {
+padding: 0px 32px;
+}
+.line{
+        width: 100%;
+    border-top: 1px solid #ccc;
+    margin-bottom: 16px;
+}
+.align-end{
+    justify-content: flex-end;
 }

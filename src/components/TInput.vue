@@ -1,6 +1,6 @@
 <template lang="html">
     <div class='t-input'>
-        <div class="t-title mb-8-px">
+        <div v-if='title' class="t-title mb-8-px">
             {{title}}
         </div>
         <div class='t-content'>

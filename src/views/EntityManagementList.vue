@@ -1,43 +1,40 @@
 <template>
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
-      <div class="main-title">Danh sách {{title}}</div>
-      <div class="t-button-wrap mb-12-px">
-        <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewAllMap()" type="border">Xem toàn cảnh</vs-button>
-        <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button>
-        <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
+      <div class="main-title flex">
+        Danh sách {{title}}
+        <div class="t-button-wrap mb-12-px flex flex-end">
+          <vs-button
+            color="#c1c1c1"
+            class="mr-8-px"
+            @click="ViewAllMap()"
+            type="border"
+          >Xem toàn cảnh</vs-button>
+          <vs-button color="#c1c1c1" class="mr-8-px" @click="selectedTable" type="border">Xem</vs-button>
+          <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
+        </div>
       </div>
-      <vs-table
-        v-model="selected"
-        :multiple="data==null||data.length==0?false:true"
-        @selected="handleSelected"
-        :data="data"
-      >
-        <template slot="thead">
-          <vs-th>MÃ</vs-th>
-          <vs-th>TÊN</vs-th>
-          <vs-th>ĐỊA CHỈ</vs-th>
-          <vs-th>Chức năng</vs-th>
-        </template>
 
-        <template slot-scope="{data}">
-          <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
-            <vs-td style="text-align:left" :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
-
-            <vs-td style="text-align:left" :data="data[indextr].name">{{ data[indextr].name }}</vs-td>
-
-            <vs-td style="text-align:left" :data="data[indextr].address">{{ data[indextr].address }}</vs-td>
-
-            <vs-td>
-              <a @click="Edit(tr)">Sửa</a> /
-              <a @click="Delete(tr)">Xóa</a>
-            </vs-td>
-          </vs-tr>
-        </template>
-        <br />
-
-        <pre>{{ selected }}</pre>
-      </vs-table>
+      <div class="flex">
+        <div style="height:437px" class="w-1/2 mr-12-px">
+          <datatable
+            @select="selectedTable"
+            v-model="selectedRows"
+            :datasource="data"
+            :columnConfig="column"
+          >
+            <template slot="contentsub" slot-scope="{ dataRow }">{{dataRow.name}}----</template>
+          </datatable>
+        </div>
+        <div class="view-map w-1/2">
+          <google-map
+            @clickmarker="onClickMarker"
+            :centerCustom="centerCustom"
+            isView
+            :markersView="marker"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -48,17 +45,82 @@ export default {
   extends: BaseList,
   data() {
     return {
+      selectedRows: [],
       selected: [],
-      data: []
+      data: [],
+      markerArr: [],
+
+      centerCustom: {},
+      column: [
+        {
+          title: "MÃ",
+          dataField: "code",
+          width: "100px"
+        },
+        {
+          title: "Tên",
+          dataField: "name",
+          width: "200px"
+        }
+      ],
+      IconMarker: {
+        PORT: "port.png",
+        WAREHOUSE: "warehouse.png",
+        DEPOTTRUCK: "truck.png",
+        DEPOTCONTAINER: "container.png",
+        DEPOTTRAILER: "mooc.png"
+      }
     };
   },
-
+  watch: {
+    // selectedRows(currentTr, old) {
+    //   debugger;
+    // }
+  },
   methods: {
+    onClickMarker(event, marker) {
+      alert("Hello");
+    },
     handleSelected(tr) {
       this.currentTr = tr;
     },
     test() {
       alert("ok");
+    },
+    selectedTable() {
+      let me = this;
+      me.markerArr = [];
+      me.data.forEach(function(item) {
+        if (item.latLng) {
+          me.centerCustom = item.latLng;
+          var obj = {};
+          obj.icon = "../" + me.IconMarker[item.type];
+          obj.position = item.latLng;
+          obj.title = item.name;
+          obj.type = item.type;
+          obj.content = item;
+          me.markerArr.push(obj);
+        }
+      });
+    }
+  },
+  computed: {
+    marker() {
+      let me = this;
+      var result = [];
+      me.selectedRows.forEach(function(item) {
+        if (item.latLng) {
+          me.centerCustom = item.latLng;
+          var obj = {};
+          obj.icon = null; //"../" + me.IconMarker[item.type];
+          obj.position = item.latLng;
+          obj.title = item.name;
+          obj.type = item.type;
+          obj.content = item;
+          result.push(obj);
+        }
+      });
+      return result;
     }
   }
 };

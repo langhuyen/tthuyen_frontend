@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-map">
-    <google-map-component @ready="load" ref="map"></google-map-component>
+    <google-map-component @ready="load" v-on="$listeners" ref="map"></google-map-component>
   </div>
 </template>
 
@@ -59,16 +59,17 @@ export default {
      */
     changeArrayMarker(markerArray) {
       let me = this;
+      me.markerArray.forEach(marker => {
+        marker.setMap(null);
+      });
       me.markerArray = [];
       markerArray.forEach(element => {
-        debugger;
-        var icon = me.IconMarker[element.type];
         var marker = me.$refs.map.createdMarker(
           element.position,
-          icon,
+          null,
           element.title,
           element.content,
-          true
+          false
         );
         me.$refs.map.setCenter(element.position);
         me.markerArray.push(marker);

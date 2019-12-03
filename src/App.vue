@@ -7,9 +7,7 @@
       <sidebar-menu ref="sidebar" :menu="menu" />
       <!-- </div> -->
       <div class="content-wrap-global">
-        <router-view />
-        <!-- <datatable /> -->
-        <!-- :key="$route.fullPath" /> -->
+        <router-view :key="$route.fullPath" />
       </div>
     </div>
   </div>

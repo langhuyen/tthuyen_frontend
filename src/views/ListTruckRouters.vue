@@ -2,7 +2,7 @@
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
       <div class="main-title flex">
-        Danh sách {{title}}
+        Danh sách
         <div class="t-button-wrap mb-12-px flex flex-end">
           Ngày lập lịch
           <date v-model="date" />
@@ -43,51 +43,51 @@
       </vs-table>-->
       <div class="flex">
         <div style="height:437px" class="w-1/2 mr-12-px">
-          <datatable :columnConfig="columns" :datasource="data">
+          <datatable v-model="selectedRows" :columnConfig="columns" :datasource="data">
             <template slot="contentsub" slot-scope="{ dataRow }">
               <!-- Ve chi tiet tung xe 1  -->
-              <div>
+              <div class="info-detail">
                 <div class="row-detail flex">
-                  <div class="title-lable">Biển số xe:</div>
-                  <div class="row-content">010101010</div>
+                  <div class="title-lable">
+                    <div>Biển số xe:</div>
+                    <div>Trọng tải</div>
+                    <div>Số trạng đi qua</div>
+                    <div>Điểm xuất phát</div>
+                    <div>Đích đến:</div>
+                    <div>Tổng quảng đường di chuyển:</div>
+                    <div>Tổng thời gian di chuyển (dự kiến):</div>
+                  </div>
+                  <div class="row-content">
+                    <div>Biển số xe:</div>
+                    <div>{{dataRow.truck.weight}} tấn</div>
+                    <div>{{dataRow.nbStops}}</div>
+                    <div>{{dataRow.start}}</div>
+                    <div>{{dataRow.end}}</div>
+                    <div>Tổng quảng đường di chuyển:</div>
+                    <div>Tổng thời gian di chuyển (dự kiến):</div>
+                  </div>
                 </div>
-                <div class="row-detail flex">
-                  <div class="title-lable">Trọng tải:</div>
-                  <div class="row-content">{{dataRow.weight}}</div>
-                </div>
-                <div class="row-detail flex">
-                  <div class="title-lable">Sỗ chặng đi qua:</div>
-                  <div class="row-content">{{dataRow.nbStops}}</div>
-                </div>
-                <div class="row-detail flex">
-                  <div class="title-lable">Điểm xuất phát:</div>
-                  <div class="row-content">{{dataRow.start}}</div>
-                </div>
-                <div class="row-detail flex">
-                  <div class="title-lable">Đích đến:</div>
-                  <div class="row-content">{{dataRow.end}}</div>
-                </div>
-                <div class="row-detail flex">
-                  <div class="title-lable">Tổng quảng đường di chuyển:</div>
-                  <div class="row-content">{{dataRow.start}}</div>
-                </div>
-                <div class="row-detail flex">
-                  <div class="title-lable">Tổng thời gian di chuyển (dự kiến):</div>
-                  <div class="row-content">{{dataRow.end}}</div>
-                </div>
+
                 <div class="row-detail">
-                  <div class="title-lable">Chi tiết các chặng đường đi qua</div>
-                  <div class="row-content step-direction">
-                    <div>Hành động : Đến bãi chứa truck</div>
-                    <!-- <div>Thời gian đến :</div>
-                    <div>Thời gian khởi hành:</div>
-                    <div>Container:</div>
-                    <div>Mooc:</div>-->
-                    <div>Địa chỉ:</div>
-                    <!-- <div>
-                      Tên bãi :
-                      Mã bãi:
-                    </div>-->
+                  <div class="title-lable special-title">Chi tiết các chặng đường đi qua</div>
+                  <div
+                    class="row-content step-direction flex"
+                    v-for="(node,index) in dataRow.nodes"
+                    :key="index"
+                  >
+                    <div class="step-content-icon">
+                      <img src="@/assets/pin.png" alt />
+                    </div>
+                    <div class="step-content">
+                      <div class="flex">
+                        <div class="title-lable">Hành động :</div>
+                        <div class="row-content">{{mapTypeAction[node.action]}}</div>
+                      </div>
+                      <div class="flex">
+                        <div class="title-lable">Địa chỉ :</div>
+                        <div class="row-content">{{node.address[0].address}}</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -113,6 +113,7 @@ export default {
       selected: [],
       data: [],
       api: api,
+      selectedRows: [],
       columns: [
         {
           title: "MÃ",
@@ -124,13 +125,68 @@ export default {
           dataField: "truckName",
           width: "200px"
         }
-      ]
+      ],
+      mapTypeAction: {
+        START_TRUCK: "Đến bãi chứa truck",
+        START_MOOC: "Đến bãi chưa mooc",
+        START_CONT: "Đến bãi container",
+        WAREHOUSE: "Đến nhà khp",
+        END_TRUCK: "Trở về bãi chứa truck",
+        PORT: "Đến cảng"
+      }
     };
   },
-
+  watch: {
+    selectedRows() {
+      this.displayDirection();
+    }
+  },
   methods: {
     openHere(event, marker) {
       console.log(marker);
+    },
+    /**
+     * Hiển thị các quãng đường đi của mỗi truck
+     */
+    displayDirection() {
+      let me = this,
+        data = me.selectedRows;
+      for (var item in data) {
+        if (item > 0) break;
+        var nodes = data[item].nodes;
+
+        var color = me.getRandomColor();
+        var i = 0;
+        for (; i < nodes.length - 1; i++) {
+          // setTimeout(function(){{}})
+          var origin = nodes[i].address[0].latLng;
+          var des = nodes[i + 1].address[0].latLng;
+          // console.log(origin);
+          // // sleep(1000);
+
+          var content = { ...nodes[i] };
+          content.truck = data[item].truck;
+          content.step = i + 1;
+          console.log(content);
+          me.$refs.google.createdMarker(
+            nodes[i].address[0].latLng,
+            this.mapTypeAction[nodes[i].action],
+            nodes[i].address[0].address,
+
+            content
+          );
+          me.$refs.google.calcRoute(origin, des, color);
+        }
+        var content = { ...nodes[i] };
+        content.step = i + 1;
+        content.truck = data[item].truck;
+        me.$refs.google.createdMarker(
+          nodes[i].address[0].latLng,
+          me.mapTypeAction[nodes[i].action],
+          nodes[i].address[0].address,
+          content
+        );
+      }
     },
     getRandomColor() {
       var letters = "0123456789ABCDEF";
@@ -189,3 +245,39 @@ export default {
 };
 </script>
  
+
+ <style lang='scss' >
+.info-detail {
+  font-size: 12px;
+  .title-lable {
+    font-weight: bold;
+    text-align: left;
+  }
+  .row-content {
+    font-style: italic;
+    text-align: left;
+  }
+  .special-title {
+  }
+  .step-direction {
+    margin-left: 32px;
+  }
+  // .step-content-icon {
+  //   background: url("@/assets/pin.png");
+  // }
+  .step-content-icon {
+    height: 24px;
+    width: 24px;
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .step-content {
+    font-style: normal;
+  }
+  .emphase {
+    font-weight: bold;
+  }
+}
+</style>

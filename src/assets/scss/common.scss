@@ -105,3 +105,37 @@
 .mr-12-px{
     margin-right: 12px;
 }
+
+.info-detail {
+  font-size: 12px;
+  .title-lable {
+    font-weight: bold;
+    text-align: left;
+  }
+  .row-content {
+    font-style: italic;
+    text-align: left;
+  }
+  .special-title {
+  }
+  .step-direction {
+    margin-left: 32px;
+  }
+  // .step-content-icon {
+  //   background: url("@/assets/pin.png");
+  // }
+  .step-content-icon {
+    height: 24px;
+    width: 24px;
+    img {
+      height: 100%;
+      width: 100%;
+    }
+  }
+  .step-content {
+    font-style: normal;
+  }
+  .emphase {
+    font-weight: bold;
+  }
+}

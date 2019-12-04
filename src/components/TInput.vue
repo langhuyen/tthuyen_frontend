@@ -5,6 +5,7 @@
         </div>
         <div class='t-content'>
             <input v-bind='$attrs' 
+            @change='onchange'
             @input="onInput" @focus='onFocus' @blur='onBlur' 
             :class='["t-input-content",{"t-input-focus":focus,"t-input-hover":hoverx}]' 
             v-model='valueInput' />    
@@ -34,6 +35,7 @@ export default {
   watch: {
     value(val) {
       this.valueInput = val;
+      this.$emit("input", val);
     }
   },
   methods: {
@@ -46,6 +48,9 @@ export default {
     },
     onFocus(e) {
       this.focus = true;
+    },
+    onchange(e) {
+      this.$emit("change", e.target.value);
     }
   }
 };

@@ -8,7 +8,6 @@ import Excel from "exceljs";
 import { fs } from "fs";
 import readXlsxFile from "read-excel-file";
 import api from "@/api/DetailAPI";
-import axios from "axios";
 
 export default {
   // components: [Datatable],

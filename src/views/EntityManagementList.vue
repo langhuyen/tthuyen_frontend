@@ -22,8 +22,20 @@
             v-model="selectedRows"
             :datasource="data"
             :columnConfig="column"
+            @dblclick="onDblClick"
           >
-            <template slot="contentsub" slot-scope="{ dataRow }">{{dataRow.name}}----</template>
+            <template slot="contentsub" slot-scope="{ dataRow }">
+              <div class="info-detail">
+                <div class="row-detail flex">
+                  <div class="title-lable">
+                    <div>Địa chỉ :</div>
+                  </div>
+                  <div class="row-content">
+                    <div>{{dataRow.address}}</div>
+                  </div>
+                </div>
+              </div>
+            </template>
           </datatable>
         </div>
         <div class="view-map w-1/2">
@@ -78,9 +90,13 @@ export default {
     // }
   },
   methods: {
-    onClickMarker(event, marker) {
-      alert("Hello");
+    //Xử lý sữa dữ liệu
+    onDblClick(event, data) {
+      var url = `${this.type}/Detail/${data.id}`;
+      this.$router.push(url);
     },
+    //Hiện thị các dialog chi tiết cho các depot
+    onClickMarker(event, marker) {},
     handleSelected(tr) {
       this.currentTr = tr;
     },

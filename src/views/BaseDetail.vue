@@ -54,6 +54,7 @@ export default {
                 position: "top-center"
               });
               me.entityData = {};
+              me.getAutoId();
             } else {
               this.$vs.notify({
                 title: "Thêm mới thất bại",
@@ -69,6 +70,7 @@ export default {
           .then(result => {
             if (result.data.code == 0) {
               me.entityData = {};
+              me.getAutoId();
             }
           });
       }
@@ -101,6 +103,18 @@ export default {
     },
     Edit() {},
     Delete() {},
+    getAutoId() {
+      let me = this;
+      var url = "http://localhost:9000/AutoGenerateCode/:" + this.type;
+      this.api.getAll(url).then(result => {
+        if (result.data.code == 0) {
+          me.entityData.code = result.data.data[0];
+          // me.entityData.address = result.data.data[0];
+        } else {
+          alert("Không tìm thấy thực thể");
+        }
+      });
+    },
     load() {
       var me = this;
       if (this.mode == Enum.Mode.Edit) {
@@ -117,15 +131,7 @@ export default {
         /**
          * Auto generate code
          */
-        var url = "http://localhost:9000/AutoGenerateCode/:" + this.type;
-        this.api.getAll(url).then(result => {
-          if (result.data.code == 0) {
-            me.entityData.code = result.data.data[0];
-            // me.entityData.address = result.data.data[0];
-          } else {
-            alert("Không tìm thấy thực thể");
-          }
-        });
+        this.getAutoId();
       }
     }
   }

@@ -38,7 +38,12 @@
         </thead>
         <tbody ref="tbody">
           <template v-for="(data,i) in datasource">
-            <tr role="row" :key="i+'-parent'" :class="i%2==0?'old':'even'">
+            <tr
+              role="row"
+              :key="i+'-parent'"
+              @dblclick="dblclick(data)"
+              :class="i%2==0?'old':'even'"
+            >
               <td
                 @click="onClickOpen"
                 tabindex="0"
@@ -127,6 +132,9 @@ export default {
     }
   },
   methods: {
+    dblclick(data) {
+      this.$emit("dblclick", event, data);
+    },
     /**
      * Ham xử lý click chọn 1 row
      */

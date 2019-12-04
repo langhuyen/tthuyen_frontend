@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-map">
-    <google-map-component @ready="load" v-on="$listeners" ref="map"></google-map-component>
+    <google-map-component ref="map" @ready="load" v-on="$listeners"></google-map-component>
   </div>
 </template>
 
@@ -48,7 +48,28 @@ export default {
     },
     centerCustom(current) {
       // this.$refs.map.setCenter(current);
+    },
+    //Hiển thị địa chỉ sang nếu có
+    value() {
+      if (value) {
+        this.createdMarker(value, null, null, null, true);
+        this.setCenter(value);
+      }
     }
+    // address(value) {
+    //   let me = this;
+    //   if (this.value) {
+    //   } else {
+    //     //Phân giải địa chỉ và hiện thị map
+    //     this.$refs.map
+    //       .geocode(value)
+    //       .then(latlng => {
+    //         me.setCenter(latlng);
+    //         me.createdMarker(value, null, null, null, true);
+    //       })
+    //       .catch(err => {});
+    //   }
+    // }
   },
 
   mounted() {},
@@ -82,17 +103,19 @@ export default {
       };
       this.$refs.map.setCenter(center);
       if (this.isView == false) {
-        var marker = this.$refs.map.createdMarker(
-          center,
-          null,
-          null,
-          null,
-          true
-        );
-        this.markerArray.push(marke);
+        // var marker = this.$refs.map.createdMarker(
+        //   center,
+        //   null,
+        //   null,
+        //   null,
+        //   true
+        // );
+        // this.markerArray.push(marke);
       } else {
         this.changeArrayMarker(this.markersView);
       }
+
+      this.$emit("ready");
     }
   }
 };

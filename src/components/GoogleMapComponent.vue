@@ -45,7 +45,7 @@ export default {
       // // me.createdMarker(me.center, "@/../public/mooc.png");
       // var marker = me.createdMarker(me.center, null);
       me.map.setCenter(me.center);
-      // me.$emit("ready");
+      me.$emit("ready");
       // USGSOverlay.prototype = new google.maps.OverlayView();
       // var bounds = new google.maps.LatLngBounds(
       //   new google.maps.LatLng(21.0228161, 105.801944),
@@ -246,6 +246,28 @@ export default {
           // }
         }
       });
+    },
+    geocode: function(address) {
+      // var geocoder = new google.maps.Geocoder();
+      var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0`;
+
+      // var geocoder = new google.maps.Geocoder();
+      var promiseObj = new Promise(function(resolve, reject) {
+        axios
+          .get(url)
+          .then(res => {
+            if (res.data.status == "OK") {
+              resolve(res.data.results[0].geometry.location);
+            } else {
+              reject(res);
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+
+      return promiseObj;
     }
   }
 };

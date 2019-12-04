@@ -20,7 +20,7 @@
               <t-input v-model='entityData.name' title='Tên'/>
             </div>
             <div class="mb-12-px w-full">
-              <t-input v-model='entityData.address' title='Địa chỉ'/>
+              <t-input v-model='entityData.address' @change='changeAdrress' title='Địa chỉ'/>
             </div>
             <div class="t-button-wrap">
               
@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="right-content ">
-             <google-map v-model="entityData.latLng" :address.sync="entityData.address" />
+             <google-map @ready='onReady' ref='map'  @dragend="changeLocation" />
         </div>
       </div>
      
@@ -39,17 +39,119 @@
 
 <script>
 import BaseDetail from "./BaseDetail";
+import axios from "axios";
 export default {
   extends: BaseDetail,
   created() {
     // this.entityName=this.$router.param.entityName;
   },
+  mounted() {},
   data() {
     return {
       address: "ha noi",
       code: "00102",
-      latlng: { lat: 21.0278, lng: 105.8342 }
+      latlng: { lat: 21.0278, lng: 105.8342 },
+      keyAPI: "AIzaSyBfFB0Xva7w9CWsrTxEneaLMgPlWQA8rXc",
+      marker: null
     };
+  },
+  methods: {
+    onReady() {
+      if (this.entityData.latLng) {
+        var me = this,
+          latlng = me.entityData.latLng;
+        me.$refs.map.$refs.map.setCenter(latlng);
+        if (me.marker) {
+          me.marker.setMap(null);
+        }
+
+        me.marker = me.$refs.map.$refs.map.createdMarker(
+          latlng,
+          null,
+          null,
+          null,
+          true
+        );
+      }
+    },
+    validate() {
+      var data = this.entityData;
+      if (
+        data.code == undefined ||
+        data.code == null ||
+        data.code.trim() == ""
+      ) {
+        return false;
+      }
+      if (
+        data.name == undefined ||
+        data.name == null ||
+        data.name.trim() == ""
+      ) {
+        return false;
+      }
+      if (
+        data.address == undefined ||
+        data.address == null ||
+        data.address.trim() == ""
+      ) {
+        return false;
+      }
+      return true;
+    },
+    geocode: function(address) {
+      // var geocoder = new google.maps.Geocoder();
+      var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${this.keyAPI}`;
+      // var geocoder = new google.maps.Geocoder();
+      var promiseObj = new Promise(function(resolve, reject) {
+        axios
+          .get(url)
+          .then(res => {
+            if (res.data.status == "OK") {
+              resolve(res.data.results[0].geometry.location);
+            } else {
+              reject(res);
+            }
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
+
+      return promiseObj;
+    },
+    //Thay đổi vị trí
+    changeLocation(event, marker) {
+      var latlng = {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng()
+      };
+      this.entityData.latLng = latlng;
+    },
+    changeAdrress(value) {
+      let me = this;
+      if (value) {
+        me.geocode(value)
+          .then(latlng => {
+            console.log(latlng);
+            me.entityData.latLng = latlng;
+            me.$refs.map.$refs.map.setCenter(latlng);
+            if (me.marker) {
+              me.marker.setMap(null);
+            }
+            me.marker = me.$refs.map.$refs.map.createdMarker(
+              latlng,
+              null,
+              null,
+              null,
+              true
+            );
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
+    }
   }
 };
 </script>

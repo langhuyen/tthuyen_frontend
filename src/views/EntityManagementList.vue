@@ -40,6 +40,7 @@
         </div>
         <div class="view-map w-1/2">
           <google-map
+            @dragend="onUpdateLocation"
             @clickmarker="onClickMarker"
             :centerCustom="centerCustom"
             isView
@@ -90,18 +91,120 @@ export default {
     // }
   },
   methods: {
+    onUpdateLocation(event, marker) {
+      var me = this;
+      var mapType = {
+        PORT: "Cảng",
+        DEPOTTRUCK: "Bãi chứa đầu kéo",
+        DEPOTCONTAINER: "Bãi chứa container",
+        DEPOTTRAILER: "Bãi chứa mocc",
+        WAREHOUSE: "Kho"
+      };
+      var content = marker.content;
+      var message = `Bạn có muốn thay đổi tọa độ vị trí của ${
+        mapType[content.type]
+      } ${content.name}`;
+      this.$vs.dialog({
+        type: "confirm",
+        color: "success",
+        title: `Xác nhận`,
+        acceptText: "Đồng ý",
+        cancelText: "Hủy bỏ",
+        text: message,
+        accept: function() {
+          me.acceptUpdate(event, marker);
+        },
+        cancel: function() {
+          me.cancelUpdate(marker);
+        }
+      });
+      debugger;
+    },
+    cancelUpdate(marker) {
+      marker.setPosition(marker.content.latLng);
+      var icon = {
+        url: marker.content.icon,
+        size: new google.maps.Size(50, 50)
+      };
+      marker.setIcon(icon);
+      marker.setDraggable(false);
+    },
+    acceptUpdate(event, marker) {
+      var depotInstance = marker.content;
+      depotInstance.latLng = {
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng()
+      };
+      var url = "http://localhost:9000/entity/update/postion";
+      this.api
+        .post(url, depotInstance)
+        .then(result => {
+          var icon = {
+            url: marker.content.icon,
+            size: new google.maps.Size(50, 50)
+          };
+          marker.setIcon(icon);
+          this.$vs.notify({
+            title: marker.content.name,
+            color: "success",
+            position: "top-center"
+          });
+        })
+        .catch(err => {});
+    },
     //Xử lý sữa dữ liệu
     onDblClick(event, data) {
       var url = `${this.type}/Detail/${data.id}`;
       this.$router.push(url);
     },
     //Hiện thị các dialog chi tiết cho các depot
-    onClickMarker(event, marker) {},
+    onClickMarker(event, marker) {
+      var me = this;
+      var content = marker.content;
+      var id = "div-" + content.code;
+      var div = ` <div class="info-detail">
+      <div class="row-detail flex">
+        <div class="title-lable">
+          <div>Mã:</div>
+          <div>Tên:</div>
+          <div>Địa chỉ:</div>
+        </div>
+        <div class="row-content">
+          <div>${content.code}</div>
+          <div>${content.name}</div>
+          <div>${content.address}</div>
+        </div>
+      </div>
+      <a id='${id}'>Click</a> và sau đó di kéo thả marker
+      để thay đổi vị trí của các depot
+    </div>`;
+      var infowindow = new google.maps.InfoWindow({
+        content: div,
+        maxWidth: 350
+      });
+      infowindow.open(marker.getMap(), marker);
+      me.$nextTick(function() {
+        var infoDiv = document.getElementById(id);
+
+        infoDiv.addEventListener(
+          "click",
+          function() {
+            me.onChangePosition(marker, infowindow);
+          },
+          false
+        );
+      });
+      google.maps.event.addListener(marker.getMap(), "click", function() {
+        infowindow.close();
+      });
+    },
+    onChangePosition(marker, infowindow) {
+      infowindow.close();
+      marker.setDraggable(true);
+      marker.setIcon(null);
+    },
     handleSelected(tr) {
       this.currentTr = tr;
-    },
-    test() {
-      alert("ok");
     },
     selectedTable() {
       let me = this;

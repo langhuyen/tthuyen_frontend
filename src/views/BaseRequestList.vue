@@ -47,7 +47,19 @@ export default {
       });
     },
     Delete(tr) {
-      console.log("tag", tr);
+      this.$vs.dialog({
+        type: "confirm",
+        color: "success",
+        title: `Xác nhận`,
+        acceptText: "Đồng ý",
+        cancelText: "Hủy bỏ",
+        text: "Bạn có muốn xóa không",
+        accept: function() {
+          me.acceptUpdate(tr);
+        }
+      });
+    },
+    acceptUpdate(tr) {
       var url = "http://localhost:9000/CustomerRequest/delete";
       this.api.delete(url, tr);
       this.load(this.type);

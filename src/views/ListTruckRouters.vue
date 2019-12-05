@@ -133,7 +133,16 @@ export default {
         WAREHOUSE: "Đến nhà khp",
         END_TRUCK: "Trở về bãi chứa truck",
         PORT: "Đến cảng"
-      }
+      },
+      mapTypeIcon: {
+        START_TRUCK: "./truck.png",
+        START_MOOC: "./mooc.png",
+        START_CONT: "./container.png",
+        WAREHOUSE: "./warehouse.png",
+        END_TRUCK: "./truck.png",
+        PORT: "./port.png"
+      },
+      markerList: []
     };
   },
   watch: {
@@ -144,6 +153,53 @@ export default {
   methods: {
     openHere(event, marker) {
       console.log(marker);
+      var me = this;
+      var content = marker.content;
+      console.log(content);
+
+      var id = "div-" + content.code;
+      var actionName = me.mapTypeAction[content.action],
+        address = content.address[0].address,
+        truck = content.truck,
+        container = "",
+        mooc = "",
+        step = content.step;
+      content.container.forEach(item => {
+        if (item.type == "CONTAINER") container = item;
+      });
+      content.mooc.forEach(item => {
+        if (item.type == "MOOC") mooc = item;
+      });
+      var div = ` <div class="info-detail">
+      <div class="row-detail flex">
+        <div class="title-lable">
+          <div>Hành động :</div>
+          <div>Địa chỉ:</div>
+          <div>Truck:</div>
+          <div>Container:</div>
+          <div>Mooc:</div>
+          <div>Chặng số:</div>
+        </div>
+        <div class="row-content">
+          <div>${actionName}</div>
+          <div>${address}</div>
+          <div>${truck.instance.name}</div>
+          <div>${container.name}</div>
+          <div>${mooc.name}</div>
+          <div>${step}</div>
+        </div>
+      </div>
+    
+    </div>`;
+      var infowindow = new google.maps.InfoWindow({
+        content: div,
+        maxWidth: 350
+      });
+      infowindow.open(marker.getMap(), marker);
+
+      google.maps.event.addListener(marker.getMap(), "click", function() {
+        infowindow.close();
+      });
     },
     /**
      * Hiển thị các quãng đường đi của mỗi truck
@@ -167,25 +223,27 @@ export default {
           var content = { ...nodes[i] };
           content.truck = data[item].truck;
           content.step = i + 1;
-          console.log(content);
-          me.$refs.google.createdMarker(
-            nodes[i].address[0].latLng,
-            this.mapTypeAction[nodes[i].action],
-            nodes[i].address[0].address,
-
-            content
+          var marker = me.$refs.google.createdMarker(
+            origin,
+            this.mapTypeIcon[nodes[i].action],
+            content,
+            null
           );
+          me.markerList.push(marker);
           me.$refs.google.calcRoute(origin, des, color);
         }
         var content = { ...nodes[i] };
         content.step = i + 1;
         content.truck = data[item].truck;
-        me.$refs.google.createdMarker(
+        var marker = me.$refs.google.createdMarker(
           nodes[i].address[0].latLng,
-          me.mapTypeAction[nodes[i].action],
-          nodes[i].address[0].address,
-          content
+          me.mapTypeIcon[nodes[i].action],
+          content,
+          null
         );
+        me.markerList.push(marker);
+        me.$refs.google.setCenter(nodes[i].address[0].latLng);
+        me.$refs.google.map.setZoom(15);
       }
     },
     getRandomColor() {
@@ -227,7 +285,7 @@ export default {
   },
 
   mounted() {
-    var url = "http://localhost:9000/transport/hello";
+    var url = "http://localhost:9000/transport/getRouter";
     var date = new Date(2019, 10, 11);
     var me = this;
     this.api.getAll(url).then(result => {

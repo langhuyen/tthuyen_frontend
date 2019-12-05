@@ -24,7 +24,6 @@
           <vs-th>TG đến muộn nhất</vs-th>
           <vs-th>TG vận chuyển sớm nhất</vs-th>
           <vs-th>TG vận chuyển muộn nhất</vs-th>
-          <vs-th>Chức năng</vs-th>
         </template>
 
         <template slot-scope="{data}">
@@ -62,11 +61,6 @@
               style="text-align:left"
               :data="data[indextr].quantity"
             >{{ data[indextr].lateDeliveryDateTime|formatDate }}</vs-td>
-
-            <vs-td>
-              <a @click="Edit(tr)">Sửa</a> /
-              <a @click="Delete(tr)">Xóa</a>
-            </vs-td>
           </vs-tr>
         </template>
         <br />
@@ -412,7 +406,10 @@ export default {
       //Load Distance giữa các điểm
       let me = this;
       var url = "http://localhost:9000/Distance/get";
-      this.api.post("http://localhost:9000/transport/hello", this.selected);
+      this.api.post(
+        "http://localhost:9000/transport/createdTrip",
+        this.selected
+      );
       var resultDistance = await this.api.getAll(url);
       if (resultDistance.data.code == 0) {
         me.dataEntity.distance = resultDistance.data.data;

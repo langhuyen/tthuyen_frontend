@@ -109,10 +109,12 @@
 .info-detail {
   font-size: 12px;
   .title-lable {
+      white-space: nowrap;
     font-weight: bold;
     text-align: left;
   }
   .row-content {
+    padding-left: 12px;
     font-style: italic;
     text-align: left;
   }

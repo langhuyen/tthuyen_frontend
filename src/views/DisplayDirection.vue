@@ -40,7 +40,7 @@ export default {
     load() {
       let me = this;
       axios
-        .get("http://localhost:9000/transport/hello")
+        .get("http://localhost:9000/transport/getRouter")
         .then(result => {
           console.log(result);
           for (var item in result.data) {

@@ -52,7 +52,7 @@ export default {
     //Hiển thị địa chỉ sang nếu có
     value() {
       if (value) {
-        this.createdMarker(value, null, null, null, true);
+        this.createdMarker(value, null, null, true);
         this.setCenter(value);
       }
     }
@@ -76,7 +76,7 @@ export default {
 
   methods: {
     /**
-     * Thực hiện thay đổi dữ liệu trên bản đồ
+     * Thực hiện thay đổi dữ liệu trên bản đồ sử dụng nhiều loại hơn
      */
     changeArrayMarker(markerArray) {
       let me = this;
@@ -84,11 +84,12 @@ export default {
         marker.setMap(null);
       });
       me.markerArray = [];
+
       markerArray.forEach(element => {
+        element.content.icon = "./../" + me.IconMarker[element.type];
         var marker = me.$refs.map.createdMarker(
           element.position,
-          null,
-          element.title,
+          "./../" + me.IconMarker[element.type],
           element.content,
           false
         );
@@ -103,14 +104,6 @@ export default {
       };
       this.$refs.map.setCenter(center);
       if (this.isView == false) {
-        // var marker = this.$refs.map.createdMarker(
-        //   center,
-        //   null,
-        //   null,
-        //   null,
-        //   true
-        // );
-        // this.markerArray.push(marke);
       } else {
         this.changeArrayMarker(this.markersView);
       }

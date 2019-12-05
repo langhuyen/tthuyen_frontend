@@ -1,7 +1,33 @@
 <template>
-  <datatable :datasource="datasource" :columnConfig="column">
+  <!-- <datatable :datasource="datasource" :columnConfig="column">
     <template slot="contentsub" slot-scope="{ dataRow }">{{dataRow.name}}----</template>
-  </datatable>
+  </datatable>-->
+  <div>
+    <div class="info-detail">
+      <div class="row-detail flex">
+        <div class="title-lable">
+          <div>Biển số xe:</div>
+          <div>Trọng tải</div>
+          <div>Số trạng đi qua</div>
+          <div>Điểm xuất phát</div>
+          <div>Đích đến:</div>
+          <div>Tổng quảng đường di chuyển:</div>
+          <div>Tổng thời gian di chuyển (dự kiến):</div>
+        </div>
+        <div class="row-content">
+          <div>Biển số xe:</div>
+          <div>dataRow.truck.weight}} tấn</div>
+          <div>dataRow.nbStops}}</div>
+          <div>dataRow.start}}</div>
+          <div>dataRow.end}}</div>
+          <div>Tổng quảng đường di chuyển:</div>
+          <div>Tổng thời gian di chuyển (dự kiến):</div>
+        </div>
+      </div>
+      <a>Click</a> và sau đó di kéo thả marker
+      để thay đổi vị trí của các depot
+    </div>
+  </div>
 </template>
 <script>
 import Excel from "exceljs";

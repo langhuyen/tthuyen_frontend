@@ -69,7 +69,6 @@ export default {
           latlng,
           null,
           null,
-          null,
           true
         );
       }
@@ -141,7 +140,6 @@ export default {
             }
             me.marker = me.$refs.map.$refs.map.createdMarker(
               latlng,
-              null,
               null,
               null,
               true

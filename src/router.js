@@ -18,6 +18,7 @@ import DisplayDirection from '@/views/DisplayDirection.vue';
 import ListTruckRouters from '@/views/ListTruckRouters.vue';
 import datatable from '@/components/TTable/Datatable'
 import darhboard from '@/views/Darhboard'
+import List from '@/views/List.vue'
 Vue.use(Router);
 var routers = new Router({
     mode: 'history',
@@ -32,10 +33,138 @@ var routers = new Router({
     },
     routes: [
 
+
         {
-            path: "/darhboard",
+            path: "/",
             name: "darhboard",
-            component: darhboard,
+            component: List,
+            redirect: '/darhboard',
+            children: [
+                {
+                    path: "/darhboard",
+                    name: "darhboard",
+                    component: darhboard,
+                },
+
+                {
+                    path: "/Entity/:entityName/Detail/:id",
+                    name: "EntityManagementAdd",
+                    component: EntityManagementAdd,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/Entity/:entityName",
+                    name: "EntityManagementList",
+                    component: EntityManagementList,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/CustomerRequest/:entityName",
+                    name: "CustomerRequestList",
+                    component: CustomerRequestList,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/CustomerRequest/:entityName/Detail/:id?",
+                    name: "CustomerRequestDetail",
+                    component: CustomerRequestDetail,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/Container",
+                    name: "Container",
+                    component: Container,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/Truck",
+                    name: "Truck",
+                    component: Truck,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/Mooc",
+                    name: "Mooc",
+                    component: Mooc,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/BaseView",
+                    name: "BaseView",
+                    component: BaseView,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/test",
+                    name: "test",
+                    component: ReadCSV,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+
+                {
+                    path: "/Transport/router",
+                    name: "router",
+                    component: router,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/DisplayDirection",
+                    name: "DisplayDirection",
+                    component: DisplayDirection,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/ListTruckRouters",
+                    name: "ListTruckRouters",
+                    component: ListTruckRouters,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+                {
+                    path: "/datatable",
+                    name: "datatable",
+                    component: datatable,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
+                },
+            ]
         },
         {
             path: "/Login",
@@ -53,131 +182,14 @@ var routers = new Router({
                 guest: true
             }
         },
-        {
-            path: "/Entity/:entityName/Detail/:id",
-            name: "EntityManagementAdd",
-            component: EntityManagementAdd,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/Entity/:entityName",
-            name: "EntityManagementList",
-            component: EntityManagementList,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/CustomerRequest/:entityName",
-            name: "CustomerRequestList",
-            component: CustomerRequestList,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/CustomerRequest/:entityName/Detail/:id?",
-            name: "CustomerRequestDetail",
-            component: CustomerRequestDetail,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/Container",
-            name: "Container",
-            component: Container,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/Truck",
-            name: "Truck",
-            component: Truck,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/Mooc",
-            name: "Mooc",
-            component: Mooc,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/BaseView",
-            name: "BaseView",
-            component: BaseView,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/test",
-            name: "test",
-            component: ReadCSV,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
 
-        {
-            path: "/Transport/router",
-            name: "router",
-            component: router,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/DisplayDirection",
-            name: "DisplayDirection",
-            component: DisplayDirection,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/ListTruckRouters",
-            name: "ListTruckRouters",
-            component: ListTruckRouters,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
-        {
-            path: "/datatable",
-            name: "datatable",
-            component: datatable,
-            props: true,
-            // meta: {
-            //     requiresAuth: true
-            // }
-        },
     ],
 
 });
 
 routers.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (localStorage.getItem('jwt') == null) {
+        if (localStorage.getItem('access_token') == null) {
             next({
                 path: '/login',
                 params: { nextUrl: to.fullPath }
@@ -189,18 +201,18 @@ routers.beforeEach((to, from, next) => {
                     next()
                 }
                 else {
-                    next({ name: 'userboard' })
+                    next({ name: 'darhboard' })
                 }
             } else {
                 next()
             }
         }
     } else if (to.matched.some(record => record.meta.guest)) {
-        if (localStorage.getItem('jwt') == null) {
+        if (localStorage.getItem('access_token') == null) {
             next()
         }
         else {
-            next({ name: 'userboard' })
+            next({ name: 'darhboard' })
         }
     } else {
         next()

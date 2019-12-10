@@ -24,6 +24,24 @@ export default {
     }
   },
   methods: {
+    /**
+     * Thực hiện search theo mã tên địa chỉ
+     */
+    search() {
+      let me = this;
+      if (me.queryString) {
+        var url =
+          "http://localhost:9000/entity/search?type=" +
+          me.type +
+          "&queryString=" +
+          me.queryString;
+        me.api.getAll(url).then(result => {
+          me.data = result.data.data;
+        });
+      } else {
+        me.load(me.type);
+      }
+    },
     ViewAllMap() {
       var me = this;
       var url = "http://localhost:9000/entity/get";

@@ -78,7 +78,9 @@
           data-dt-idx="0"
           tabindex="-1"
           id="example_previous"
-        >Previous</div>
+        >
+          <img src="@/assets/previous.png" alt srcset />
+        </div>
         <div class="flex">
           <div
             class="paginate_button current"
@@ -98,7 +100,9 @@
           data-dt-idx="7"
           tabindex="0"
           id="example_next"
-        >Next</div>
+        >
+          <img src="@/assets/next.png" alt srcset />
+        </div>
       </div>
     </div>
   </div>
@@ -116,7 +120,8 @@ export default {
       currentPointer: 0,
       currentWidth: 0,
       isSelectedAll: [],
-      isSelected: false
+      isSelected: false,
+      currentPage: ""
     };
   },
   props: {
@@ -269,8 +274,24 @@ export default {
 }
 </style>
 
-<style >
+<style lang='scss' >
 .tr-head {
   background: #ccc;
+}
+.paginate_button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  padding: 4px;
+  margin-right: 8px;
+  justify-content: center;
+  cursor: pointer;
+  :hover {
+    background: red;
+  }
+  img {
+    width: 50%;
+    // height: 100 %;
+  }
 }
 </style>

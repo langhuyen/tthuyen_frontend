@@ -1,7 +1,10 @@
 import axios from "axios";
+axios.defaults.headers.common["Authorization"] =
+    "Bearer " + localStorage.getItem("access_token");
 
 var api = {
     getAll: function (url) {
+        let me = this;
         return new Promise(function (resolve, reject) {
             axios
                 .get(url)
@@ -11,6 +14,8 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+                    if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
                 .finally(function () {
@@ -19,7 +24,8 @@ var api = {
         });
     },
     getById: function (url, id) {
-        var urlRequest = url + "/:" + id;
+        let me = this;
+        var urlRequest = url + "?id=" + id;
         return new Promise(function (resolve, reject) {
             axios
                 .get(urlRequest)
@@ -29,6 +35,8 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+                    if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
                 .finally(function () {
@@ -37,6 +45,7 @@ var api = {
         });
     },
     delete: function (url, Entity) {
+        let me = this;
         return new Promise(function (resolve, reject) {
             axios
                 .post(url, Entity)
@@ -46,6 +55,8 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+                    if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
                 .finally(function () {
@@ -54,6 +65,7 @@ var api = {
         });
     },
     insert: function (url, Entity) {
+        let me = this;
         return new Promise(function (resolve, reject) {
             axios
                 .post(url, Entity)
@@ -63,6 +75,8 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+                    if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
                 .finally(function () {
@@ -80,6 +94,8 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+                    if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
                 .finally(function () {
@@ -88,6 +104,7 @@ var api = {
         });
     },
     post: function (url, Entity) {
+        let me = this;
         return new Promise(function (resolve, reject) {
             axios
                 .post(url, Entity)
@@ -97,6 +114,8 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
+                    console.log(error);
+                    if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
                 .finally(function () {
@@ -104,6 +123,23 @@ var api = {
                 });
         });
     },
+    getNewToken() {
+        var url = `http://localhost:9000/oauth/token?refresh_token=${localStorage.getItem("refresh_token")}&grant_type=refresh_token`;
+
+        axios
+            .post(url, null, {
+                headers: {
+                    Authorization: "Basic " + btoa("loginservice:loginservice"),
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            })
+            .then(result => {
+                console.log(result);
+                localStorage.setItem("access_token", result.data.access_token);
+                localStorage.setItem("refresh_token", result.data.refresh_token);
+
+            });
+    }
 };
 
 export default api;

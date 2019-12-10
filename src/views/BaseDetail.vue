@@ -123,6 +123,7 @@ export default {
           .then(result => {
             if (result.data.code == 0) {
               me.entityData = result.data.data[0];
+              me.setdefaultMarker();
             } else {
               alert("Không tìm thấy thực thể");
             }

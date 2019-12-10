@@ -1,15 +1,17 @@
 <template>
   <div id="app">
-    <!-- <router-view :key="$route.fullPath" /> -->
-    <navigation />
+    <!-- <div class="content-wrap-global"> -->
+    <router-view :key="$route.fullPath" />
+
+    <!-- <navigation />
     <div style="display:flex">
-      <!-- <div> -->
+    
       <sidebar-menu ref="sidebar" :menu="menu" />
-      <!-- </div> -->
+   
       <div class="content-wrap-global">
         <router-view :key="$route.fullPath" />
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
@@ -60,7 +62,7 @@ body {
   text-align: center;
   color: #2c3e50;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 // .v-sidebar-menu {
 //   width: 200px;

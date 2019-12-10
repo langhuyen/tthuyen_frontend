@@ -5,13 +5,10 @@
         <img src="@/assets/logo.png" alt />
       </div>
       <div class="title mb-12-px">Đăng Ký</div>
-      <!-- <div class="sub-title">
-        <a>Đăng ký</a> để sử dụng TM.com
-      </div> -->
-      <div class='error'> Lỗi </div>
+      <div class="error mt-12-px" v-if="error">{{error}}</div>
       <div class="register-form">
         <div class="mb-12-px">
-          <t-input v-model="user.user" placeholder="Tên" title="Tên đăng nhập" />
+          <t-input v-model="user.username" placeholder="Tên" title="Tên đăng nhập" />
         </div>
         <div class="mb-12-px">
           <t-input v-model="user.email" placeholder="Email" title="Email" />
@@ -20,31 +17,87 @@
           <t-input v-model="user.password" placeholder="Mật khẩu" title="Mật khẩu" type="password" />
         </div>
         <div class="mb-12-px">
-          <t-input v-model="user.passwordRepeat" placeholder="Mật khẩu" title="Xác nhận mật khẩu" type="password" />
+          <t-input
+            v-model="user.passwordRepeat"
+            placeholder="Mật khẩu"
+            title="Xác nhận mật khẩu"
+            type="password"
+          />
         </div>
         <div class="mb-12-px flex">
-          <vs-button color="rgb(26, 115, 232)">ĐĂNG KÝ</vs-button>
+          <vs-button color="rgb(26, 115, 232)" @click="register">ĐĂNG KÝ</vs-button>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import api from "@/api/DetailAPI";
 export default {
   data() {
     return {
-      user: {}
+      user: {},
+      error: null,
+      api: api
     };
+  },
+  methods: {
+    //Xử lý đăng ký
+    register() {
+      let me = this;
+      if (me.validData()) {
+        this.error = "";
+        var url = "http://localhost:9000/user/register";
+        var entity = {
+          ...me.user
+        };
+        this.api.post(url, entity).then(result => {
+          if (result.data.code == 0) {
+            me.$parent.id = result.data.data[0].id;
+            me.$emit("input", 2);
+          } else {
+            me.error = result.data.data[0].validation;
+          }
+        });
+      }
+    },
+    validData() {
+      let me = this,
+        data = me.user;
+      if (me.emptyObject(data.username)) {
+        this.error = "Tên đăng nhập không được để trống";
+        return false;
+      }
+      if (me.emptyObject(data.email)) {
+        this.error = "Email không được để trống";
+        return false;
+      }
+      if (me.emptyObject(data.password)) {
+        this.error = "Mật khẩu không được để trống";
+        return false;
+      }
+      if (data.password !== data.passwordRepeat) {
+        this.error = "Mật khẩu không khớp nhau";
+        return false;
+      }
+      return true;
+    },
+    emptyObject(object) {
+      return object == undefined || object == null || object.trim() == "";
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.error{
-    color:red;
-    font-size:13px;
-    text-align:left;
-    margin:0px  30px 0px 30px;
+.error {
+  color: red;
+  font-size: 13px;
+  text-align: left;
+  margin: 0px 30px 0px 30px;
+}
+.mt-12-px {
+  margin-top: 12px;
 }
 .register-background {
   display: flex;
@@ -55,12 +108,12 @@ export default {
   background-size: cover;
 }
 .register-content {
-    box-shadow: 2px 1px 6px 1px rgba(0, 0, 255, .2);
+  box-shadow: 2px 1px 6px 1px rgba(0, 0, 255, 0.2);
   //   color: #212121;
   flex-flow: column;
   background: white;
   width: 400px;
-//   height: 443px;
+  //   height: 443px;
   border-radius: 3px;
   .register-logo {
     width: 100px;

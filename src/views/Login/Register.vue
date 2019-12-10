@@ -4,7 +4,7 @@
  -->
 <template>
   <div class="bg-white w-full">
-    <div class=" w-full">
+    <div class="w-full">
       <div class="flex step flex-end w-full">
         <div class="relation">
           <div class="title-step">Tạo tài khoản</div>
@@ -25,7 +25,9 @@
           <div class="cricle" :class="{active:step>2}"></div>
         </div>
       </div>
-      <component :is='registerForm'></component>
+      <div class="content-form">
+        <component :is="registerForm" v-model="step"></component>
+      </div>
     </div>
   </div>
 </template>
@@ -34,23 +36,41 @@
 <script>
 import registerForm from "@/views/Login/RegisterForm";
 import confirmForm from "@/views/Login/ConfirmForm";
+import login from "@/views/Login/LoginForm";
 export default {
   data() {
     return {
       step: 1,
-      registerForm:confirmForm,
+      registerForm: registerForm,
+         id: null
     };
+  },
+  watch: {
+    step(val) {
+      if (val == 1) {
+        this.registerForm = registerForm;
+      } else if (val == 2) {
+        this.registerForm = confirmForm;
+      } else if (val == 3) {
+        this.registerForm = login;
+      }
+    }
   }
 };
 </script>
 <style lang="scss" scoped>
-.step{
-  margin-bottom:24px;
+.content-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.step {
+  margin-bottom: 24px;
 }
 .bg-white {
-  padding:60px 150px;
+  padding: 60px 150px;
   background: white;
-    //  background: url("../../assets/background.jpg");
+  //  background: url("../../assets/background.jpg");
 }
 .cricle {
   border: 1px solid #c1c1c1;

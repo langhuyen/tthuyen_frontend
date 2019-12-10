@@ -5,37 +5,69 @@
         <img src="@/assets/logo.png" alt />
       </div>
       <div class="title mb-12-px">Xác thực</div>
-      <div class="sub-title">
-       <pre> Mã xác thực được gửi tới email mà bạn đã đăng ký!
-        Vui lòng điền mã xác thực để xác thực</pre>
+      <div class="sub-title mt-12-px">
+        <pre> Mã xác thực được gửi tới email mà bạn đã đăng ký!
+              Vui lòng điền mã xác thực để xác thực</pre>
       </div>
-      <div class='error'> Lỗi </div>
+      <div class="error" v-if="error">{{error}}</div>
       <div class="register-form">
         <div class="mb-12-px">
-          <t-input v-model="user.user" placeholder="Mã" title="Mã" />
+          <t-input v-model="tokenEmail" placeholder="Mã" title="Mã" />
         </div>
-          <vs-button color="rgb(26, 115, 232)">XÁC THỰC</vs-button>
-        </div>
+        <vs-button color="rgb(26, 115, 232)" @click="confirm">XÁC THỰC</vs-button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import api from "@/api/DetailAPI";
 export default {
   data() {
     return {
-      user: {}
+      tokenEmail: "",
+      error: null,
+      api: api
     };
+  },
+  methods: {
+    confirm() {
+      let me = this;
+      if (me.validData()) {
+        this.error = "";
+        var url =
+          "http://localhost:9000/user/verifyUser?id=" +
+          me.$parent.id +
+          "&tokenEmail=" +
+          me.tokenEmail;
+        this.api.post(url).then(result => {
+          if (result.data.code == 0) {
+            if (result.data.data[0]) {
+              me.$emit("input", 3);
+            } else {
+              me.error = "Mã xác thực không đúng.Xin thử lại";
+            }
+          } else {
+            me.error = "Mã xác thực không đúng.Xin thử lại";
+          }
+        });
+      }
+    },
+    validData() {
+      return true;
+    }
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.error{
-    color:red;
-    font-size:13px;
-    text-align:left;
-    margin:0px  30px 0px 30px;
+.mt-12-px {
+  margin-top: 12px;
+}
+.error {
+  color: red;
+  font-size: 13px;
+  text-align: left;
+  margin: 0px 30px 0px 30px;
 }
 .register-background {
   display: flex;
@@ -46,12 +78,12 @@ export default {
   background-size: cover;
 }
 .register-content {
-    box-shadow: 2px 1px 6px 1px rgba(0, 0, 255, .2);
+  box-shadow: 2px 1px 6px 1px rgba(0, 0, 255, 0.2);
   //   color: #212121;
   flex-flow: column;
   background: white;
   width: 400px;
-//   height: 443px;
+  //   height: 443px;
   border-radius: 3px;
   .register-logo {
     width: 100px;

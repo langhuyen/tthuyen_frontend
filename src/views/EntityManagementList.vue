@@ -1,8 +1,15 @@
 <template>
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
-      <div class="main-title flex">
-        Danh sách {{title}}
+      <div class="main-title flex align-center">
+        <div class="mr-12-px">Danh sách {{title}}</div>
+        <div>
+          <t-input
+            @keydown.enter="search"
+            v-model="queryString"
+            placeholder="Nhập tên, mã, địa chỉ để tìm kiếm"
+          />
+        </div>
         <div class="t-button-wrap mb-12-px flex flex-end">
           <vs-button
             color="#c1c1c1"
@@ -10,12 +17,12 @@
             @click="ViewAllMap()"
             type="border"
           >Xem toàn cảnh</vs-button>
-          <vs-button color="#c1c1c1" class="mr-8-px" @click="selectedTable" type="border">Xem</vs-button>
+
           <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
         </div>
       </div>
 
-      <div class="flex">
+      <div class="flex" style="height:437px">
         <div style="height:437px" class="w-1/2 mr-12-px">
           <datatable
             @select="selectedTable"
@@ -58,6 +65,7 @@ export default {
   extends: BaseList,
   data() {
     return {
+      queryString: "",
       selectedRows: [],
       selected: [],
       data: [],
@@ -145,7 +153,7 @@ export default {
           };
           marker.setIcon(icon);
           this.$vs.notify({
-            title: marker.content.name,
+            title: "Ban đã cập nhật vị trí thành công ",
             color: "success",
             position: "top-center"
           });
@@ -161,7 +169,7 @@ export default {
     onClickMarker(event, marker) {
       var me = this;
       var content = marker.content;
-      var id = "div-" + content.code;
+      var id = "div-" + content.id;
       var div = ` <div class="info-detail">
       <div class="row-detail flex">
         <div class="title-lable">
@@ -185,14 +193,15 @@ export default {
       infowindow.open(marker.getMap(), marker);
       me.$nextTick(function() {
         var infoDiv = document.getElementById(id);
-
-        infoDiv.addEventListener(
-          "click",
-          function() {
-            me.onChangePosition(marker, infowindow);
-          },
-          false
-        );
+        if (infoDiv != null) {
+          infoDiv.addEventListener(
+            "click",
+            function() {
+              me.onChangePosition(marker, infowindow);
+            },
+            false
+          );
+        }
       });
       google.maps.event.addListener(marker.getMap(), "click", function() {
         infowindow.close();
@@ -244,4 +253,10 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.align-center {
+  align-items: center;
+}
+</style>
  

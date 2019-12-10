@@ -1,32 +1,15 @@
 <template>
   <div class="login-background">
-    <div class="login-content flex">
-      <div class="login-logo">
-        <img src="@/assets/logo.png" alt />
-      </div>
-      <div class="title mb-12-px">Đăng nhập</div>
-      <div class="sub-title">
-        <a>Đăng ký</a> để sử dụng TM.com
-      </div>
-      <div class="login-form">
-        <div class="mb-12-px">
-          <t-input v-model="user.user" placeholder="email" title="Tên đăng nhập" />
-        </div>
-        <div class="mb-12-px">
-          <t-input v-model="user.password" placeholder="mật khẩu" title="Mật khẩu" type="password" />
-        </div>
-        <div class="mb-12-px flex">
-          <vs-button color="rgb(26, 115, 232)">ĐĂNG NHẬP</vs-button>
-        </div>
-      </div>
-    </div>
+    <component :is="login" />
   </div>
 </template>
 <script>
+import login from "@/views/Login/LoginForm";
 export default {
   data() {
     return {
-      user: {}
+      user: {},
+      login: login
     };
   }
 };
@@ -44,7 +27,7 @@ export default {
 }
 .login-content {
   //   color: #212121;
-   box-shadow: 2px 1px 6px 1px rgba(0, 0, 255, .2);
+  box-shadow: 2px 1px 6px 1px rgba(0, 0, 255, 0.2);
   flex-flow: column;
   background: white;
   width: 400px;

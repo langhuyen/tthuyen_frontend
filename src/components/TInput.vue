@@ -5,8 +5,9 @@
         </div>
         <div class='t-content'>
             <input v-bind='$attrs' 
-            @change='onchange'
-            @input="onInput" @focus='onFocus' @blur='onBlur' 
+          
+            v-on="listeners"
+          
             :class='["t-input-content",{"t-input-focus":focus,"t-input-hover":hoverx}]' 
             v-model='valueInput' />    
         </div>
@@ -26,10 +27,18 @@ export default {
     }
   },
   data() {
+    let me = this;
     return {
       hoverx: false,
       focus: false,
-      valueInput: this.value
+      valueInput: me.value,
+      listeners: {
+        ...me.$listeners,
+        change: me.onchange,
+        input: me.onInput,
+        focus: me.onFocus,
+        blur: me.onBlur
+      }
     };
   },
   watch: {

@@ -58,20 +58,23 @@ export default {
   methods: {
     onReady() {
       if (this.entityData.latLng) {
-        var me = this,
-          latlng = me.entityData.latLng;
-        me.$refs.map.$refs.map.setCenter(latlng);
-        if (me.marker) {
-          me.marker.setMap(null);
-        }
-
-        me.marker = me.$refs.map.$refs.map.createdMarker(
-          latlng,
-          null,
-          null,
-          true
-        );
+        this.setdefaultMarker();
       }
+    },
+    setdefaultMarker() {
+      var me = this,
+        latlng = me.entityData.latLng;
+      me.$refs.map.$refs.map.setCenter(latlng);
+      if (me.marker) {
+        me.marker.setMap(null);
+      }
+
+      me.marker = me.$refs.map.$refs.map.createdMarker(
+        latlng,
+        null,
+        null,
+        true
+      );
     },
     validate() {
       var data = this.entityData;

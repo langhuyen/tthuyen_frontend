@@ -102,22 +102,29 @@ export default {
       return true;
     },
     geocode: function(address) {
-      // var geocoder = new google.maps.Geocoder();
+      var geocoder = new google.maps.Geocoder();
       var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${this.keyAPI}`;
-      // var geocoder = new google.maps.Geocoder();
+      var geocoder = new google.maps.Geocoder();
       var promiseObj = new Promise(function(resolve, reject) {
-        axios
-          .get(url)
-          .then(res => {
-            if (res.data.status == "OK") {
-              resolve(res.data.results[0].geometry.location);
-            } else {
-              reject(res);
-            }
-          })
-          .catch(err => {
-            reject(err);
-          });
+        // axios
+        //   .get(url)
+        //   .then(res => {
+        //     if (res.data.status == "OK") {
+        //       resolve(res.data.results[0].geometry.location);
+        //     } else {
+        //       reject(res);
+        //     }
+        //   })
+        //   .catch(err => {
+        //     reject(err);
+        //   });
+        geocoder.geocode({ address: address }, function(results, status) {
+          if (status == "OK") {
+            resolve(results[0].geometry.location);
+          } else {
+            reject(status);
+          }
+        });
       });
 
       return promiseObj;

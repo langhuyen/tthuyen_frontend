@@ -142,7 +142,6 @@ export default {
       for (; i < path.length - 1; i++) {
         var line = new google.maps.Polyline({
           path: [path[i], path[i + 1]],
-
           strokeColor: color
         });
         if ((i + 1) % 20 == 0) {
@@ -192,19 +191,27 @@ export default {
       });
     },
     geocode: function(address) {
-      // var geocoder = new google.maps.Geocoder();
+      // var ưder = new google.maps.Geocoder();
       var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0`;
 
-      // var geocoder = new google.maps.Geocoder();
+      var geocoder = new google.maps.Geocoder();
       var promiseObj = new Promise(function(resolve, reject) {
-        axios
-          .get(url)
+        // axios
+        //   .get(url)
+        //   .then(res => {
+        //     if (res.data.status == "OK") {
+        //       resolve(res.data.results[0].geometry.location);
+        //     } else {
+        //       reject(res);
+        //     }
+        //   })
+        //   .catch(err => {
+        //     reject(err);
+        //   });
+        geocoder
+          .geocode(address)
           .then(res => {
-            if (res.data.status == "OK") {
-              resolve(res.data.results[0].geometry.location);
-            } else {
-              reject(res);
-            }
+            resolve(res.latLng);
           })
           .catch(err => {
             reject(err);

@@ -16,7 +16,11 @@ var menu = [
         {
             href: "/Truck",
             title: 'Danh sach truck'
-        }
+        },
+        {
+            href: "/ListTruckRouters",
+            title: 'Xe được lập lịch'
+        },
         ]
     },
     {
@@ -75,11 +79,12 @@ var menu = [
     },
     /**
      * Chức năng tiến hành vận tải các tuyến đường trong từng ngày
+     * <i class="fas fa-map-marked-alt"></i>
      */
     {
         href: "/Transport/router",
         title: "Quản lý vận tải",
-        icon: "fa fa-warehouse"
+        icon: "fa fa-map-marked-alt"
     },
 
 

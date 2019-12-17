@@ -1,10 +1,11 @@
 import axios from "axios";
-axios.defaults.headers.common["Authorization"] =
-    "Bearer " + localStorage.getItem("access_token");
 
 var api = {
     getAll: function (url) {
         let me = this;
+        axios.defaults.headers.common["Authorization"] =
+            "Bearer " + localStorage.getItem("access_token");
+
         return new Promise(function (resolve, reject) {
             axios
                 .get(url)

@@ -285,7 +285,7 @@ export default {
     handleSelected(tr) {
       this.currentTr = tr;
     },
-    geocode: function(address) {
+    de: function(address) {
       // var geocoder = new google.maps.Geocoder();
       var url = `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=AIzaSyCgBE4hSryEhlwDwTlIagZSJXY-wpp_-N0`;
 

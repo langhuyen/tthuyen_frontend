@@ -1,8 +1,9 @@
 <template lang="html">
-    <div class='nav'>
+    <div class='nav flex'>
       <div class="logo">
         <img src="../assets/logo.png" alt="" class='logo-img' srcset="">
       </div>
+        <div class='name'>Transport</div>
     </div>
 </template>
 <script>
@@ -17,7 +18,7 @@ export default {};
 }
 
 .logo {
-  width: 200px;
+  width: 48px;
   height: 100%;
 }
 .logo-img {

@@ -1,72 +1,145 @@
 <template>
   <div class="wrap_content p-24-px">
     <div class="h-content list-content p-12-px">
-      <div class="main-title">Danh sách</div>
-      <div class="t-button-wrap mb-12-px">
-        <!-- <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewAllMap()" type="border">Xem toàn cảnh</vs-button>
-        <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button> --->
-        <vs-button color="rgb(26, 115, 232)" @click="computedData" type="filled">Tạo tuyến</vs-button>
+      <div class="main-title flex">
+        <div class="wrap-font-warning">
+          <i class="fas font-warning fa-exclamation-circle"></i>
+          Chọn từng dòng chi tiết để tạo chuyến lập lịch
+        </div>
+        <div class="t-date-wrap t-button-wrap mb-12-px flex flex-end">
+          <div class="mr-12-px">
+            <t-input
+              @keydown.enter="search"
+              v-model="queryString"
+              placeholder="Nhập tên, mã, địa chỉ để tìm kiếm"
+            />
+          </div>
+          <div class="mr-12-px">Thời gian lập Y/C</div>
+          <div class="w-130-px mr-12-px">
+            <date :useTime="false" v-model="date" />
+          </div>
+          <div class>
+            <!-- <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewAllMap()" type="border">Xem toàn cảnh</vs-button>
+            <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button> --->
+            <vs-button color="rgb(26, 115, 232)" @click="computedData" type="filled">Tạo tuyến</vs-button>
+          </div>
+        </div>
       </div>
-      <vs-table
-        v-model="selected"
-        :multiple="data==null||data.length==0?false:true"
-        @selected="handleSelected"
-        :data="data"
-      >
-        <template slot="thead">
-          <!-- <vs-th>MÃ</vs-th> -->
-          <vs-th>TÊN</vs-th>
-          <vs-th>KHO</vs-th>
-          <vs-th>CẢNG</vs-th>
-          <vs-th>Loại Container</vs-th>
-          <vs-th>Số lượng</vs-th>
-          <vs-th>TG đến sớm nhất</vs-th>
-          <vs-th>TG đến muộn nhất</vs-th>
-          <vs-th>TG vận chuyển sớm nhất</vs-th>
-          <vs-th>TG vận chuyển muộn nhất</vs-th>
-        </template>
+      <div class="wrap-table">
+        <vs-table
+          v-model="selected"
+          :multiple="data==null||data.length==0?false:true"
+          @selected="handleSelected"
+          :data="data"
+        >
+          <template slot="thead">
+            <!-- <vs-th>MÃ</vs-th> -->
+            <vs-th class="align-left w-120-px">LOẠI</vs-th>
+            <vs-th class="align-left w-120-px">MÃ</vs-th>
+            <vs-th class="align-left w-150-px">TÊN</vs-th>
+            <vs-th class="align-left w-120-px">KHO</vs-th>
+            <vs-th class="align-left w-120-px">CẢNG</vs-th>
+            <vs-th class="align-left w-120-px">CONTAINER</vs-th>
+            <vs-th class="align-left w-120-px">TRỌNG TẢI</vs-th>
+            <vs-th class="align-left w-200-px">TG ĐẾN SỚM NHẤT</vs-th>
+            <vs-th class="align-left w-200-px">TG ĐẾN MUỘN NHẤT</vs-th>
+            <vs-th class="align-left w-250-px">TG VẬN CHUYỂN SỚM NHÂT</vs-th>
+            <vs-th class="align-left w-250-px">TG VẬN CHUYỂN MUỘN NHẤT</vs-th>
+            <vs-th class="align-left w-300-px">GHI CHÚ</vs-th>
+            <vs-th class="align-left w-300-px">DIỄN GIẢI</vs-th>
+          </template>
 
-        <template slot-scope="{data}">
-          <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
-            <vs-td :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].warehouse"
-            >{{data[indextr].warehouseCode[0]?data[indextr].warehouseCode[0].code:''}}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].port"
-            >{{data[indextr].portCode[0]?data[indextr].portCode[0].code:''}}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].containerCode"
-            >{{data[indextr].containerCode[0]?data[indextr].containerCode[0].code:''}}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].quantity"
-            >{{ data[indextr].quantity }}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].quantity"
-            >{{ data[indextr].earlyPickupDateTime|formatDate }}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].quantity"
-            >{{ data[indextr].latePickupDateTime|formatDate }}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].quantity"
-            >{{ data[indextr].earlyDeliveryDateTime|formatDate }}</vs-td>
-            <vs-td
-              style="text-align:left"
-              :data="data[indextr].quantity"
-            >{{ data[indextr].lateDeliveryDateTime|formatDate }}</vs-td>
-          </vs-tr>
-        </template>
-        <br />
+          <template slot-scope="{data}">
+            <vs-tr :data="tr" :key="indextr" v-for="(tr, indextr) in data">
+              <vs-td
+                class="align-left w-120-px"
+                :data="data[indextr].type"
+              >{{ requestType[data[indextr].type].value }}</vs-td>
+              <vs-td class="align-left w-120-px" :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
+              <vs-td class="align-left w-150-px" :data="data[indextr].code">{{ data[indextr].name }}</vs-td>
+              <vs-td
+                class="align-left w-120-px"
+                :data="data[indextr].warehouse"
+              >{{data[indextr].warehouseCode[0]?data[indextr].warehouseCode[0].code:''}}</vs-td>
+              <vs-td
+                class="align-left w-120-px"
+                :data="data[indextr].port"
+              >{{data[indextr].portCode[0]?data[indextr].portCode[0].code:''}}</vs-td>
+              <vs-td
+                class="align-left w-120-px"
+                :data="data[indextr].containerCode"
+              >{{data[indextr].containerCode[0]?data[indextr].containerCode[0].code:''}}</vs-td>
+              <vs-td
+                class="align-left w-120-px"
+                :data="data[indextr].weight"
+              >{{ data[indextr].weight||0 }} tấn</vs-td>
+              <vs-td
+                class="align-center w-150-px"
+                :data="data[indextr].quantity"
+              >{{ data[indextr].earlyPickupDateTime|formatDate }}</vs-td>
+              <vs-td
+                class="align-center w-150-px"
+                :data="data[indextr].quantity"
+              >{{ data[indextr].latePickupDateTime|formatDate }}</vs-td>
+              <vs-td
+                class="align-center w-150-px"
+                :data="data[indextr].quantity"
+              >{{ data[indextr].earlyDeliveryDateTime|formatDate }}</vs-td>
+              <vs-td
+                class="align-center w-150-px"
+                :data="data[indextr].quantity"
+              >{{ data[indextr].lateDeliveryDateTime|formatDate }}</vs-td>
+              <vs-td
+                class="align-left w-150-px"
+                :data="data[indextr].quantity"
+              >{{ data[indextr].description}}</vs-td>
+              <vs-td
+                class="align-left w-150-px"
+                :data="data[indextr].quantity"
+              >{{ requestType[data[indextr].type].des }}</vs-td>
+            </vs-tr>
+          </template>
+          <br />
 
-        <pre>{{ selected }}</pre>
-      </vs-table>
+          <pre>{{ selected }}</pre>
+        </vs-table>
+      </div>
+      <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+        <div class="line"></div>
+        <div class="flex align-end">
+          <div
+            class="paginate_button previous disabled"
+            aria-controls="example"
+            data-dt-idx="0"
+            tabindex="-1"
+            id="example_previous"
+          >
+            <img src="@/assets/previous.png" alt srcset />
+          </div>
+          <div class="flex">
+            <div
+              class="paginate_button current"
+              aria-controls="example"
+              data-dt-idx="1"
+              tabindex="0"
+            >1</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">2</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">3</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">4</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">5</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="6" tabindex="0">6</div>
+          </div>
+          <div
+            class="paginate_button next"
+            aria-controls="example"
+            data-dt-idx="7"
+            tabindex="0"
+            id="example_next"
+          >
+            <img src="@/assets/next.png" alt srcset />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +154,24 @@ export default {
       selected: [],
       data: [],
       api: api,
+      requestType: {
+        ImportLadenRequest: {
+          value: "ImportLaden",
+          des: "Vận chuyển container hàng từ cảng về kho"
+        },
+        ImportEmptyRequest: {
+          value: "ImportEmpty",
+          des: "Vận chuyển container rỗng từ kho về bãi"
+        },
+        ExportLadenRequest: {
+          value: "ExportLaden",
+          des: "Vận chuyển container hàng từ kho về cảng"
+        },
+        ExportEmptyRequest: {
+          value: "ExportLaden",
+          des: " Vận chuyển container rỗng từ bãi đến kho"
+        }
+      },
       dataEntity: {
         imLadenRequests: [],
         imEmptyRequests: [],
@@ -428,7 +519,6 @@ export default {
       }
       this.convertRequest();
       console.log(JSON.stringify(this.dataEntity));
-      debugger;
     }
   },
   mounted() {

@@ -31,9 +31,7 @@ export default {
       left: "300px"
     };
   },
-  mounted() {
-    debugger;
-  },
+  mounted() {},
   methods: {
     onHover() {
       this.top = Math.floor(Math.random() * 10) + "px";

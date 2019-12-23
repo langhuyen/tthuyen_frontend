@@ -82,7 +82,7 @@
       </div>
 
       <div class="calendar-footer" v-if="!footer">
-        <div class="time-wrap">
+        <div class="time-wrap" v-if="useTime">
           Giờ:
           <input
             class="time"
@@ -220,6 +220,10 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    useTime: {
+      default: true,
+      type: Boolean
     }
   },
 
@@ -522,7 +526,6 @@ export default {
       return result;
     },
     onComplete(e) {
-      debugger;
       const maskRef = e.detail;
       this.time = maskRef.unmaskedValue;
       maskRef.updateValue();
@@ -563,7 +566,6 @@ export default {
      * @param {Object}
      */
     setByDay(day) {
-      debugger;
       if (day.disabled) return;
 
       this.selectedYear = this.currentYear;
@@ -716,7 +718,10 @@ export default {
       const date = this.format
         ? this.format(this.calculatedDate)
         : this.calculatedDate;
-      var dateTime = date + " " + this.time;
+      var dateTime = date;
+      if (this.useTime) {
+        dateTime = date + " " + this.time;
+      }
       const timestamp = Date.parse(dateTime);
       if (Number.isNaN(timestamp)) return;
       this.$emit(`input`, timestamp);

@@ -5,46 +5,104 @@
       <div class="t-button-wrap mb-12-px">
         <vs-button color="rgb(26, 115, 232)" @click="Add()" type="filled">Thêm mới</vs-button>
       </div>
-      <vs-table v-model="selected" @selected="handleSelected" :data="data">
-        <template slot="thead">
-          <vs-th>MÃ</vs-th>
-          <vs-th>TÊN</vs-th>
-          <vs-th>Chức năng</vs-th>
-        </template>
+      <div class="wrap-table">
+        <vs-table v-model="selected" @selected="handleSelected" :data="data">
+          <template slot="thead">
+            <vs-th class="align-left w-150-px">MÃ</vs-th>
+            <vs-th class="align-left w-150-px">TÊN</vs-th>
+            <vs-th class="align-left w-150-px">TRỌNG TẢI</vs-th>
+            <vs-th class="align-left w-150-px">BIỂN SỐ</vs-th>
+            <vs-th class="align-left w-150-px">GHI CHÚ</vs-th>
+            <vs-th class="align-center w-150-px">CHỨC NĂNG</vs-th>
+          </template>
 
-        <template slot-scope="{data}">
-          <vs-tr :data="tr" @click="Edit(tr)" :key="indextr" v-for="(tr, indextr) in data">
-            <vs-td :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
+          <template slot-scope="{data}">
+            <vs-tr :data="tr" @click="Edit(tr)" :key="indextr" v-for="(tr, indextr) in data">
+              <vs-td class="align-left w-150-px" :data="data[indextr].code">{{ data[indextr].code }}</vs-td>
 
-            <vs-td :data="data[indextr].name">{{ data[indextr].name }}</vs-td>
+              <vs-td class="align-left w-150-px" :data="data[indextr].name">{{ data[indextr].name }}</vs-td>
+              <vs-td
+                class="align-left w-150-px"
+                :data="data[indextr].name"
+              >{{ data[indextr].weight }} tấn</vs-td>
+              <vs-td
+                class="align-left w-150-px"
+                :data="data[indextr].name"
+              >{{ data[indextr].licensePlates }}</vs-td>
+              <vs-td
+                class="align-left w-150-px"
+                :data="data[indextr].name"
+              >{{ data[indextr].description }}</vs-td>
 
-            <vs-td>
-              <a @click="Edit(tr)">Sửa</a> /
-              <a @click="Delete(tr)">Xóa</a>
-            </vs-td>
-          </vs-tr>
-        </template>
-        <br />
+              <vs-td class="align-center w-150-px">
+                <div class="flex icon-feature flex">
+                  <div @click="Edit(tr)">
+                    <i class="fas fa-edit icon-feature-detail"></i>
+                  </div>
+                  <div class="icon-feature-detail">/</div>
+                  <div @click="Delete(tr)">
+                    <i class="far fa-trash-alt icon-feature-detail"></i>
+                  </div>
+                </div>
+              </vs-td>
+            </vs-tr>
+          </template>
+          <br />
 
-        <pre>{{ selected }}</pre>
-      </vs-table>
-    </div>
-    <vs-popup @close="entityData={}" title="Thêm Mooc" :active.sync="open">
-      <div class="mb-12-px w-full">
-        <div class="flex">
-          <div class="w-1/3 mr-12-px">
-            <t-input v-model="entityData.code" title="Mã" />
+          <pre>{{ selected }}</pre>
+        </vs-table>
+      </div>
+      <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
+        <div class="line"></div>
+        <div class="flex align-end">
+          <div
+            class="paginate_button previous disabled"
+            aria-controls="example"
+            data-dt-idx="0"
+            tabindex="-1"
+            id="example_previous"
+          >
+            <img src="@/assets/previous.png" alt srcset />
           </div>
-          <div class="w-1/3 mr-12-px">
-            <t-input v-model="entityData.name" title="Tên" />
+          <div class="flex">
+            <div
+              class="paginate_button current"
+              aria-controls="example"
+              data-dt-idx="1"
+              tabindex="0"
+            >1</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">2</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">3</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">4</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">5</div>
+            <div class="paginate_button" aria-controls="example" data-dt-idx="6" tabindex="0">6</div>
           </div>
-          <div class="w-1/3 mr-12-px">
-            <t-input type="number" v-model="entityData.weight" title="Trọng tải" />
+          <div
+            class="paginate_button next"
+            aria-controls="example"
+            data-dt-idx="7"
+            tabindex="0"
+            id="example_next"
+          >
+            <img src="@/assets/next.png" alt srcset />
           </div>
         </div>
       </div>
+    </div>
+    <t-popup @close="entityData={}" title="Thêm Mooc" :active.sync="open">
+      <div class="mb-12-px w-full">
+        <div class="flex">
+          <div class="w-1/2 mr-12-px">
+            <t-input v-model="entityData.code" title="Mã" />
+          </div>
+          <div class="w-1/2 mr-12-px">
+            <t-input v-model="entityData.name" title="Tên" />
+          </div>
+        </div>
+      </div>
+
       <div class="mb-12-px flex w-full">
-        <div class="w-1/3 mr-12-px">
+        <div class="w-1/2 mr-12-px">
           <combobox
             multiple
             v-model="entityData.returnDepotCodes"
@@ -55,7 +113,7 @@
             fieldText="code"
           />
         </div>
-        <div class="w-1/3">
+        <div class="w-1/2">
           <combobox
             v-model="entityData.depotLocationCode"
             title="Bãi chứa Mooc"
@@ -66,11 +124,24 @@
           />
         </div>
       </div>
+      <div class="mb-12-px w-full">
+        <t-textarea v-model="entityData.description" title="Ghi chú"></t-textarea>
+      </div>
+      <div class="mb-12-px w-full">
+        <div class="flex">
+          <div class="w-1/2 mr-12-px">
+            <t-input v-model="entityData.licensePlates" title="Biển số" />
+          </div>
+          <div class="w-1/2">
+            <t-input type="number" v-model="entityData.weight" title="Trọng tải (tấn)" />
+          </div>
+        </div>
+      </div>
       <div class="t-button-wrap flex">
         <vs-button color="dark" class="mr-8-px" @click="Cancel" type="border">Hủy</vs-button>
         <vs-button color="rgb(26, 115, 232)" class="mr-8-px" @click="AddAndClose" type="filled">Lưu</vs-button>
       </div>
-    </vs-popup>
+    </t-popup>
   </div>
 </template>
 
@@ -111,13 +182,14 @@ export default {
     },
     Add() {
       let me = this;
-      this.open = true;
-      this.mode = Enum.Mode.Add;
-      this.entityData = {};
-      this.entityData.type = "MOOC";
+
       var url = "http://localhost:9000/AutoGenerateCode/:MOOC";
       this.api.getAll(url).then(result => {
         if (result.data.code == 0) {
+          me.open = true;
+          me.mode = Enum.Mode.Add;
+          me.entityData = {};
+          me.entityData.type = "MOOC";
           me.entityData.code = result.data.data[0];
           // me.entityData.address = result.data.data[0];
         } else {
@@ -164,7 +236,7 @@ export default {
     Delete(tr) {
       this.$vs.dialog({
         type: "confirm",
-        color: "success",
+        color: " rgb(26, 115, 232)",
         title: `Xác nhận`,
         acceptText: "Đồng ý",
         cancelText: "Hủy bỏ",

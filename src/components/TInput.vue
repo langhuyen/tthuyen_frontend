@@ -7,8 +7,8 @@
             <input v-bind='$attrs' 
           
             v-on="listeners"
-          
-            :class='["t-input-content",{"t-input-focus":focus,"t-input-hover":hoverx}]' 
+            :title="tooltip"
+            :class='["t-input-content",{"t-input-focus":focus,"t-input-hover":hoverx,"t-input-error":error}]' 
             v-model='valueInput' />    
         </div>
         
@@ -24,11 +24,17 @@ export default {
     value: {
       type: String
       // required: true
+    },
+    required: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     let me = this;
     return {
+      error: false,
+      tooltip: "",
       hoverx: false,
       focus: false,
       valueInput: me.value,
@@ -43,8 +49,9 @@ export default {
   },
   watch: {
     value(val) {
+      debugger;
       this.valueInput = val;
-      this.$emit("input", val);
+      // this.$emit("input", val);
     }
   },
   methods: {
@@ -54,18 +61,26 @@ export default {
     },
     onBlur(e) {
       this.focus = false;
+      if (this.required && this.valueInput.trim().length == 0) {
+        this.setError(this.title + " Không được bỏ trống");
+      }
     },
     onFocus(e) {
+      this.error = false;
       this.focus = true;
     },
     onchange(e) {
       this.$emit("change", e.target.value);
+    },
+    setError(title) {
+      this.tooltip = title;
+      this.error = true;
     }
   }
 };
 </script>
 
-<style >
+<style lang='scss'>
 .t-title {
   white-space: nowrap;
   font-size: 13px;
@@ -78,8 +93,12 @@ export default {
 .t-input-content {
   width: 100%;
   height: 32px;
-  border: 1px solid #c1c1c1;
+  border: 1px solid #ebebeb;
+  border-radius: 5px;
   padding: 3px 10px;
+}
+.t-input-content:hover {
+  border: 1px solid rgba(0, 0, 0, 0.4);
 }
 .t-input-content::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
@@ -108,5 +127,9 @@ export default {
 .t-input-focus {
   border: 1px solid rgb(26, 115, 232);
   outline: none;
+}
+
+.t-input-error {
+  border: 1px solid red;
 }
 </style>

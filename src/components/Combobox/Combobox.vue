@@ -2,8 +2,8 @@
 
     <div class="t-input">
     <div class="t-title mb-8-px">{{title}}</div>
-      <vs-select @change="changeSelected()" :multiple="multiple" noData="Không tìm thấy dữ liệu"  v-model='valueCombox' autocomplete>
-        <vs-select-item  v-for='item in datax' :text='item.text' :value='item.value'></vs-select-item>     
+      <vs-select @change="changeSelected" :multiple="multiple" noData="Không tìm thấy dữ liệu"  v-model='valueCombox' autocomplete>
+        <vs-select-item @click="selected(item)" v-for='item in datax' :text='item.text' :value='item.value'></vs-select-item>     
         </vs-select>
     </div>
 </template>
@@ -70,9 +70,11 @@ export default {
         .then(result => {
           result.data.data.forEach(item => {
             let objItem = {
+              ...item,
               text: item[me.fieldText],
               value: item[me.fieldValue]
             };
+
             me.datax.push(objItem);
           });
         })
@@ -83,9 +85,10 @@ export default {
   },
   methods: {
     changeSelected(data) {
-      debugger;
-      this.$emit("selected", data);
+      var item = this.datax.filter(i => i.value == data);
+      this.$emit("selected", item[0]);
     },
+    selected(data) {},
     generateText() {
       let me = this;
     }

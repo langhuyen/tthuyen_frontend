@@ -3,9 +3,16 @@
     <div class="h-content list-content p-12-px">
       <div class="main-title flex">
         Danh sách
-        <div class="t-button-wrap mb-12-px flex flex-end">
-          Ngày lập lịch
-          <date v-model="date" />
+        <div class="t-date-wrap t-button-wrap mb-12-px flex flex-end">
+          <div class="mr-12-px">
+            <t-input
+              @keydown.enter="search"
+              v-model="queryString"
+              placeholder="Nhập tên, mã, địa chỉ để tìm kiếm"
+            />
+          </div>
+          <div class="mr-12-px">Ngày lập lịch</div>
+          <date :useTime="false" v-model="date" />
         </div>
       </div>
 
@@ -109,6 +116,7 @@ export default {
   //   extends: BaseList,
   data() {
     return {
+      queryString: "",
       date: new Date(),
       selected: [],
       data: [],
@@ -151,6 +159,10 @@ export default {
     }
   },
   methods: {
+    /**
+     * Tìm kiếm các truck đã được lập lịch
+     */
+    search() {},
     openHere(event, marker) {
       console.log(marker);
       var me = this;
@@ -305,6 +317,9 @@ export default {
  
 
  <style lang='scss' >
+.t-date-wrap {
+  align-items: center;
+}
 .info-detail {
   font-size: 12px;
   .title-lable {

@@ -22,6 +22,7 @@
             placeholder="Mật khẩu"
             title="Xác nhận mật khẩu"
             type="password"
+            @keydown.enter="register"
           />
         </div>
         <div class="mb-12-px flex">
@@ -53,6 +54,8 @@ export default {
         };
         this.api.post(url, entity).then(result => {
           if (result.data.code == 0) {
+            localStorage.setItem("userId", result.data.data[0].id);
+            localStorage.setItem("userName", result.data.data[0].username);
             me.$parent.id = result.data.data[0].id;
             me.$emit("input", 2);
           } else {

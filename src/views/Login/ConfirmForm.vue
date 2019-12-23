@@ -12,7 +12,7 @@
       <div class="error" v-if="error">{{error}}</div>
       <div class="register-form">
         <div class="mb-12-px">
-          <t-input v-model="tokenEmail" placeholder="Mã" title="Mã" />
+          <t-input v-model="tokenEmail" placeholder="Mã" title="Mã" @keydown.enter="confirm" />
         </div>
         <vs-button color="rgb(26, 115, 232)" @click="confirm">XÁC THỰC</vs-button>
       </div>

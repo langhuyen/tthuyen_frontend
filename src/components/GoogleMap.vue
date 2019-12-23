@@ -53,6 +53,7 @@ export default {
     value() {
       if (value) {
         this.createdMarker(value, null, null, true);
+
         this.setCenter(value);
       }
     }
@@ -86,10 +87,14 @@ export default {
       me.markerArray = [];
 
       markerArray.forEach(element => {
-        element.content.icon = "./../" + me.IconMarker[element.type];
+        if (element.icon) {
+          element.content.icon = element.icon;
+        } else {
+          element.content.icon = "./../" + me.IconMarker[element.type];
+        }
         var marker = me.$refs.map.createdMarker(
           element.position,
-          "./../" + me.IconMarker[element.type],
+          element.content.icon,
           element.content,
           false
         );

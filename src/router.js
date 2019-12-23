@@ -18,6 +18,7 @@ import DisplayDirection from '@/views/DisplayDirection.vue';
 import ListTruckRouters from '@/views/ListTruckRouters.vue';
 import datatable from '@/components/TTable/Datatable'
 import darhboard from '@/views/Darhboard'
+import logout from '@/views/Login/Logout'
 import List from '@/views/List.vue'
 Vue.use(Router);
 var routers = new Router({
@@ -44,6 +45,10 @@ var routers = new Router({
                     path: "/darhboard",
                     name: "darhboard",
                     component: darhboard,
+                    props: true,
+                    meta: {
+                        requiresAuth: true
+                    }
                 },
 
                 {
@@ -174,12 +179,21 @@ var routers = new Router({
                 guest: true
             }
         },
+
         {
             path: "/Register",
             name: "Register",
             component: Register,
             meta: {
                 guest: true
+            }
+        },
+        {
+            path: "/logout",
+            name: "logout",
+            component: logout,
+            meta: {
+                requiresAuth: true
             }
         },
 

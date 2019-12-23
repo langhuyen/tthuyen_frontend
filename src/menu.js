@@ -1,6 +1,11 @@
 var menu = [
 
     {
+        href: "/darhboard",
+        title: "Tổng quan",
+        icon: "fa fa-chart-line"
+    },
+    {
         href: "/Entity/WAREHOUSE",
         title: "Quản lý kho",
         icon: "fa fa-warehouse"
@@ -87,7 +92,16 @@ var menu = [
         icon: "fa fa-map-marked-alt"
     },
 
+    {
+        title: "Quản lý tài khoản",
+        icon: "fa  fa-users",
+        child: [{
+            href: '/logout',
+            title: 'Đăng xuất'
+        },
 
+        ]
+    },
 
     /**
      * Chức năng xem lịch sử các tuyến hàng

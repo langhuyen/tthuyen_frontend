@@ -10,7 +10,7 @@
             placeholder="Nhập tên, mã, địa chỉ để tìm kiếm"
           />
         </div>
-        <div class="t-button-wrap mb-12-px flex flex-end">
+        <div class="t-button-wrap flex flex-end">
           <vs-button
             color="#c1c1c1"
             class="mr-8-px"
@@ -19,6 +19,13 @@
           >Xem toàn cảnh</vs-button>
 
           <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
+        </div>
+      </div>
+      <div class="wrap-font-warning mb-12-px">
+        <i class="fas font-warning fa-exclamation-circle"></i>
+        <div class="align-left">
+          <div>Click vào dòng chi tiết để hiện thị trên bản đồ.</div>
+          <div>Click marker trên bản đồ để xem thông tin chi tiết.</div>
         </div>
       </div>
 
@@ -34,6 +41,15 @@
             <template slot="contentsub" slot-scope="{ dataRow }">
               <div class="info-detail">
                 <div class="row-detail flex">
+                  <div class="flex icon-feature flex">
+                    <div @click="Edit(dataRow)">
+                      <i class="fas fa-edit icon-feature-detail"></i>
+                    </div>
+                    <div class="icon-feature-detail">/</div>
+                    <div @click="Delete(dataRow)">
+                      <i class="far fa-trash-alt icon-feature-detail"></i>
+                    </div>
+                  </div>
                   <div class="title-lable">
                     <div>Địa chỉ :</div>
                   </div>
@@ -114,7 +130,7 @@ export default {
       } ${content.name}`;
       this.$vs.dialog({
         type: "confirm",
-        color: "success",
+        color: " rgb(26, 115, 232)",
         title: `Xác nhận`,
         acceptText: "Đồng ý",
         cancelText: "Hủy bỏ",
@@ -126,7 +142,6 @@ export default {
           me.cancelUpdate(marker);
         }
       });
-      debugger;
     },
     cancelUpdate(marker) {
       marker.setPosition(marker.content.latLng);

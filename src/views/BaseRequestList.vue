@@ -49,7 +49,7 @@ export default {
     Delete(tr) {
       this.$vs.dialog({
         type: "confirm",
-        color: "success",
+        color: " rgb(26, 115, 232)",
         title: `Xác nhận`,
         acceptText: "Đồng ý",
         cancelText: "Hủy bỏ",

@@ -64,11 +64,29 @@ export default {
         }
       });
     },
+
     Delete(tr) {
-      console.log("tag", tr);
+      let me = this;
+      this.$vs.dialog({
+        type: "confirm",
+        color: " rgb(26, 115, 232)",
+        title: `Xác nhận`,
+        acceptText: "Đồng ý",
+        cancelText: "Hủy bỏ",
+        text: `Bạn có muốn xóa không ${tr.name}`,
+        accept: function() {
+          me.acceptDelete(tr);
+        }
+      });
+    },
+    acceptDelete(tr) {
       var url = "http://localhost:9000/entity/delete";
-      this.api.delete(url, tr);
-      this.load(this.type);
+      let me = this;
+
+      this.api.delete(url, tr).then(result => {
+        console.log(result);
+        me.load(this.type);
+      });
     },
     Add() {
       //Click vào thêm mới

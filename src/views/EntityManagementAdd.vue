@@ -5,9 +5,16 @@
         <div class="left-content mr-20-px">
          
             
-          <div class='main-title'>
+            <div class='main-title'>
             Thêm {{title}}
             </div>
+            <div class="wrap-font-warning mb-12-px">
+              <i class="fas font-warning fa-exclamation-circle"></i>
+              <div class="align-center">
+                  <div> Nhập địa chỉ sau đó sử dụng marker để điều</div>
+                <div>chỉnh vị trí trên bản đồ nếu chưa đúng.</div>
+              </div>
+           </div>
          
 
             
@@ -21,6 +28,9 @@
             </div>
             <div class="mb-12-px w-full">
               <t-input v-model='entityData.address' @change='changeAdrress' title='Địa chỉ'/>
+            </div>
+            <div class="mb-12-px w-full">
+              <t-textarea v-model='entityData.description' title='Ghi chú'/>
             </div>
             <div class="t-button-wrap">
               

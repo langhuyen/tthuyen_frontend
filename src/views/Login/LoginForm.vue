@@ -7,12 +7,19 @@
     <div class="sub-title">
       <a @click="redirect('/register')">Đăng ký</a> để sử dụng TM.com
     </div>
+    <div class="error mt-12-px" v-if="error">{{error}}</div>
     <div class="login-form">
       <div class="mb-12-px">
         <t-input v-model="user.user" placeholder="email" title="Tên đăng nhập" />
       </div>
       <div class="mb-12-px">
-        <t-input v-model="user.password" placeholder="mật khẩu" title="Mật khẩu" type="password" />
+        <t-input
+          v-model="user.password"
+          @keydown.enter="login"
+          placeholder="mật khẩu"
+          title="Mật khẩu"
+          type="password"
+        />
       </div>
       <div class="mb-12-px flex">
         <vs-button color="rgb(26, 115, 232)" @click="login">ĐĂNG NHẬP</vs-button>
@@ -26,7 +33,8 @@ import axios from "axios";
 export default {
   data() {
     return {
-      user: {}
+      user: {},
+      error: ""
     };
   },
   methods: {
@@ -36,6 +44,8 @@ export default {
     login() {
       let me = this;
       var url = `http://localhost:9000/oauth/token?username=${this.user.user}&password=${this.user.password}&grant_type=password`;
+
+      this.error = "";
       axios
         .post(url, null, {
           headers: {
@@ -47,10 +57,15 @@ export default {
           console.log(result);
           localStorage.setItem("access_token", result.data.access_token);
           localStorage.setItem("refresh_token", result.data.refresh_token);
+          localStorage.setItem("username", result.data.username);
           console.log(localStorage.getItem("access_token"));
           axios.defaults.headers.common["Authorization"] =
             "Bearer " + localStorage.getItem("access_token");
           me.$router.push({ name: "darhboard" });
+        })
+        .catch(err => {
+          me.error =
+            "Tên đăng nhập và mật khẩu không đúng. Xin vui lòng thử lại.";
         });
     }
   }
@@ -101,6 +116,12 @@ export default {
     background: rgb(26, 115, 232);
     font-weight: bolder;
   }
+}
+.error {
+  color: red;
+  font-size: 13px;
+  text-align: left;
+  margin: 0px 30px 0px 30px;
 }
 </style>
 

@@ -19,6 +19,7 @@
       ref="datepicker"
       v-model="valueDatepicker"
       @close="updateDatepicker"
+      :useTime="useTime"
     ></datepicker>
   </div>
 </template>
@@ -33,7 +34,11 @@ export default {
     title: {
       type: String
     },
-    value: {}
+    value: {},
+    useTime: {
+      default: true,
+      type: Boolean
+    }
   },
   data() {
     return {
@@ -43,7 +48,7 @@ export default {
       valueDate: this.value ? this.formatDate(this.value) : "",
       valueDatepicker: `${this.value ? this.value : ""}`,
       mask: {
-        mask: "dd{/}MM{/}YYYY{ }HH{:}mm{:}ss",
+        mask: this.useTime ? "dd{/}MM{/}YYYY{ }HH{:}mm{:}ss" : "dd{/}MM{/}YYYY",
         blocks: {
           dd: {
             mask: IMask.MaskedRange,
@@ -103,11 +108,9 @@ export default {
   },
   watch: {
     value(val) {
-      debugger;
       this.valueDate = this.formatDate(val);
     },
     valueDatepicker(val) {
-      debugger;
       this.valueDate = this.formatDate(val);
       this.$emit(`input`, val);
     }
@@ -144,47 +147,75 @@ export default {
         }
       });
     },
-    onAccept(e) {
-      // const maskRef = e.detail;
-      // console.log("accept", maskRef.value);
-    },
+    onAccept(e) {},
     onComplete(e) {
-      const maskRef = e.detail;
-      maskRef.updateValue();
-      console.log("complete", maskRef.unmaskedValue);
-      this.valueDate = maskRef.unmaskedValue;
-      let arr = this.valueDate.split(" ");
-      let date = arr[0]
-        .split("/")
-        .reverse()
-        .join("-");
-      var dateFormate = date + " " + arr[1];
-      const timestamp = Date.parse(dateFormate);
-      console.log(this.dateFormate);
-      if (Number.isNaN(timestamp)) return;
-      this.$emit(`input`, timestamp);
-      // Update gia tri datepicker
-      this.valueDatepicker = timestamp;
+      if (this.useTime) {
+        const maskRef = e.detail;
+        maskRef.updateValue();
+        console.log("complete", maskRef.unmaskedValue);
+        this.valueDate = maskRef.unmaskedValue;
+        let arr = this.valueDate.split(" ");
+        let date = arr[0]
+          .split("/")
+          .reverse()
+          .join("-");
+        var dateFormate = date + " " + arr[1];
+        const timestamp = Date.parse(dateFormate);
+        console.log(this.dateFormate);
+        if (Number.isNaN(timestamp)) return;
+        this.$emit(`input`, timestamp);
+        // Update gia tri datepicker
+        this.valueDatepicker = timestamp;
+      } else {
+        const maskRef = e.detail;
+        maskRef.updateValue();
+        console.log("complete", maskRef.unmaskedValue);
+        this.valueDate = maskRef.unmaskedValue;
+        let arr = this.valueDate.split(" ");
+        let date = arr[0]
+          .split("/")
+          .reverse()
+          .join("-");
+        var dateFormate = date;
+        const timestamp = Date.parse(dateFormate);
+        if (Number.isNaN(timestamp)) return;
+        this.$emit(`input`, timestamp);
+        // Update gia tri datepicker
+        this.valueDatepicker = timestamp;
+      }
     },
     formatDate(val) {
-      let valuedate = new Date(val);
-      let date =
-        valuedate.getDate() < 10
-          ? "0" + valuedate.getDate()
-          : valuedate.getDate();
-      let month =
-        valuedate.getMonth() < 9
-          ? "0" + (valuedate.getMonth() + 1)
-          : valuedate.getMonth() + 1;
-      return (
-        date +
-        "/" +
-        month +
-        "/" +
-        valuedate.getFullYear() +
-        " " +
-        this.formateTime(val)
-      );
+      if (this.useTime) {
+        let valuedate = new Date(val);
+        let date =
+          valuedate.getDate() < 10
+            ? "0" + valuedate.getDate()
+            : valuedate.getDate();
+        let month =
+          valuedate.getMonth() < 9
+            ? "0" + (valuedate.getMonth() + 1)
+            : valuedate.getMonth() + 1;
+        return (
+          date +
+          "/" +
+          month +
+          "/" +
+          valuedate.getFullYear() +
+          " " +
+          this.formateTime(val)
+        );
+      } else {
+        let valuedate = new Date(val);
+        let date =
+          valuedate.getDate() < 10
+            ? "0" + valuedate.getDate()
+            : valuedate.getDate();
+        let month =
+          valuedate.getMonth() < 9
+            ? "0" + (valuedate.getMonth() + 1)
+            : valuedate.getMonth() + 1;
+        return date + "/" + month + "/" + valuedate.getFullYear();
+      }
     },
     formateTime(val) {
       let valuedate = new Date(val);
@@ -205,7 +236,6 @@ export default {
     },
 
     updateDatepicker() {
-      debugger;
       this.isDatepicker = !this.isDatepicker;
 
       this.valueDate = this.formatDate(this.valueDatepicker);

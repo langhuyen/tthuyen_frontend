@@ -8,6 +8,8 @@ import FormDate from './components/Date/FormDate.vue'
 import Combobox from './components/Combobox/Combobox.vue'
 import Map from '@/components/GoogleMapComponent.vue'
 import Datatable from "@/components/TTable/Datatable.vue";
+import TTextarea from "@/components/TTextarea.vue";
+import TPopup from "@/components/TPopup.vue";
 
 Vue.component(TInput.name, TInput);
 Vue.component(TButton.name, TButton);
@@ -17,5 +19,7 @@ Vue.component(Tooltip.name, Tooltip);
 Vue.component(Combobox.name, Combobox);
 Vue.component(Map.name, Map);
 Vue.component(Datatable.name, Datatable);
+Vue.component(TTextarea.name, TTextarea);
+Vue.component(TPopup.name, TPopup);
 
 export default Vue;

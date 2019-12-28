@@ -88,7 +88,6 @@ export default {
       let me = this;
 
       this.api.delete(url, tr).then(result => {
-        console.log(result);
         me.load(this.type);
       });
     },

@@ -274,6 +274,15 @@ table {
     background-repeat: no-repeat;
        cursor: pointer;
  }
+ .view-map{
+        background: 0;
+    width: 32px;
+    height: 32px;
+    background-size: 32px;
+    background-image: url('../../assets/viewmap.png');
+    background-repeat: no-repeat;
+       cursor: pointer;
+ }
 
  footer {
     padding: 16px;

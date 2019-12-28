@@ -10,6 +10,7 @@ import Map from '@/components/GoogleMapComponent.vue'
 import Datatable from "@/components/TTable/Datatable.vue";
 import TTextarea from "@/components/TTextarea.vue";
 import TPopup from "@/components/TPopup.vue";
+import Daterange from "@/components/Date/Daterange.vue";
 
 Vue.component(TInput.name, TInput);
 Vue.component(TButton.name, TButton);
@@ -21,5 +22,6 @@ Vue.component(Map.name, Map);
 Vue.component(Datatable.name, Datatable);
 Vue.component(TTextarea.name, TTextarea);
 Vue.component(TPopup.name, TPopup);
+Vue.component(Daterange.name, Daterange);
 
 export default Vue;

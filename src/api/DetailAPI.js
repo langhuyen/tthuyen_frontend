@@ -15,7 +15,7 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
+
                     if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
@@ -36,7 +36,7 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
+
                     if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
@@ -56,7 +56,7 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
+
                     if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
@@ -76,7 +76,7 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
+
                     if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
@@ -95,7 +95,6 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
                     if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
@@ -115,7 +114,6 @@ var api = {
                 })
                 .catch(function (error) {
                     // handle error
-                    console.log(error);
                     if (error.response.status == 401) me.getNewToken();
                     reject(error);
                 })
@@ -135,7 +133,6 @@ var api = {
                 }
             })
             .then(result => {
-                console.log(result);
                 localStorage.setItem("access_token", result.data.access_token);
                 localStorage.setItem("refresh_token", result.data.refresh_token);
 

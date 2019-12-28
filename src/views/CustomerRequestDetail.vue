@@ -129,7 +129,6 @@ export default {
     onSelectedContainer(data) {},
     //Chonj doi tuong
     onSelectedPort(data) {
-      console.log(data);
       let me = this;
       if (me.port) {
         me.port.setMap(null);
@@ -187,7 +186,6 @@ export default {
       me.loadDepot();
     },
     selectedEvent(data) {
-      console.log(data);
     },
 
     loadDepot() {

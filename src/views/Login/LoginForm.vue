@@ -54,11 +54,9 @@ export default {
           }
         })
         .then(result => {
-          console.log(result);
           localStorage.setItem("access_token", result.data.access_token);
           localStorage.setItem("refresh_token", result.data.refresh_token);
           localStorage.setItem("username", result.data.username);
-          console.log(localStorage.getItem("access_token"));
           axios.defaults.headers.common["Authorization"] =
             "Bearer " + localStorage.getItem("access_token");
           me.$router.push({ name: "darhboard" });

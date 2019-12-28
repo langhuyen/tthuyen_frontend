@@ -529,7 +529,6 @@ export default {
       const maskRef = e.detail;
       this.time = maskRef.unmaskedValue;
       maskRef.updateValue();
-      console.log("complete", maskRef.unmaskedValue);
       const date = this.format
         ? this.format(this.calculatedDate)
         : this.calculatedDate;
@@ -733,8 +732,6 @@ export default {
      * see fit.
      */
     onClose() {
-      console.log("close");
-
       this.hideBodyOverflow(false);
 
       this.$emit("close");

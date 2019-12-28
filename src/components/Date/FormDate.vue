@@ -152,7 +152,6 @@ export default {
       if (this.useTime) {
         const maskRef = e.detail;
         maskRef.updateValue();
-        console.log("complete", maskRef.unmaskedValue);
         this.valueDate = maskRef.unmaskedValue;
         let arr = this.valueDate.split(" ");
         let date = arr[0]
@@ -161,7 +160,6 @@ export default {
           .join("-");
         var dateFormate = date + " " + arr[1];
         const timestamp = Date.parse(dateFormate);
-        console.log(this.dateFormate);
         if (Number.isNaN(timestamp)) return;
         this.$emit(`input`, timestamp);
         // Update gia tri datepicker
@@ -169,7 +167,6 @@ export default {
       } else {
         const maskRef = e.detail;
         maskRef.updateValue();
-        console.log("complete", maskRef.unmaskedValue);
         this.valueDate = maskRef.unmaskedValue;
         let arr = this.valueDate.split(" ");
         let date = arr[0]

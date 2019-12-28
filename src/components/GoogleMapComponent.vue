@@ -110,12 +110,29 @@ export default {
       return marker1;
     },
     //Thực hiện lại  đường đi.
-    setPathMap() {},
+    setPathMap(pathArrays, marker) {
+      let me = this;
+      marker.setMap(me.map);
+      pathArrays.forEach(line => {
+        line.setMap(me.map);
+      });
+      // for (var line in pathArrays) {
+      // }
+    },
     //Xóa đường đi trên bản đồ.
-    clearPath() {},
+    clearPath(pathArrays, marker) {
+      let me = this;
+      // for (var line in pathArrays) {
+      //   line.setMap(null);
+      // }
+      marker.setMap(null);
+      pathArrays.forEach(line => {
+        line.setMap(null);
+      });
+    },
 
     //Hàm vẽ mũi tên chỉ đường
-    createdArrow(path, color) {
+    createdArrow(path, color, refNode) {
       let me = this;
       var lineSymbol = {
         path: google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -144,6 +161,7 @@ export default {
       ];
       // Create the polyline and add the symbol via the 'icons' property.
       var i = 0;
+      var pathArray = [];
       for (; i < path.length - 1; i++) {
         var line = new google.maps.Polyline({
           path: [path[i], path[i + 1]],
@@ -153,6 +171,7 @@ export default {
           line.setOptions({ icons: icons });
         }
         line.setMap(me.map);
+        pathArray.push(line);
         me.setCenter(path[i]);
       }
 
@@ -163,24 +182,16 @@ export default {
       });
       line.setMap(me.map);
       me.setCenter(path[i]);
+      pathArray.push(line);
+      refNode.pathArray = pathArray;
     },
     /**
      * Lập lộ trình đi từ điểm A đến B,
      *
      */
-    calcRoute(origin, destination, color) {
+    calcRoute(origin, destination, color, refNode, nodes) {
       let me = this;
       var directionsService = new google.maps.DirectionsService();
-      // var directionsDisplay = new google.maps.DirectionsRenderer();
-      // directionsDisplay.setOptions({
-      //   polylineOptions: {
-      //     strokeColor: color
-      //   },
-      //   suppressMarkers: true,
-      //   draggable: false
-      // });
-      // directionsDisplay.setMap(this.map);
-      // // directionsDisplay.setOption({});
       var request = {
         origin: origin.lat + "," + origin.lng,
         destination: destination.lat + "," + destination.lng,
@@ -190,8 +201,17 @@ export default {
       directionsService.route(request, function(result, status) {
         if (status == "OK") {
           // var _route = result.routes[0].legs[0];
+          console.log(result);
           var path = result.routes[0].overview_path;
-          me.createdArrow(path, color);
+          var distance = result.routes[0].legs[0].distance;
+          var duration = result.routes[0].legs[0].duration;
+          refNode.distance = distance;
+          refNode.duration = duration;
+          refNode.marker.content.distance = distance;
+          nodes.distances += distance.value;
+          nodes.duration += Math.ceil(duration.value / 60);
+          refNode.marker.content.duration = duration;
+          me.createdArrow(path, color, refNode);
         }
       });
     },

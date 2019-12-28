@@ -537,7 +537,6 @@ export default {
         this.convertToDepot(resultDepot.data.data);
       }
       this.convertRequest();
-      console.log(JSON.stringify(this.dataEntity));
     },
 
     getPaging(date, pageIndex, pageSize = 20) {

@@ -45,7 +45,7 @@
               :class="i%2==0?'old':'even'"
             >
               <td
-                @click="onClickOpen"
+                @click="onClickOpen($event,data)"
                 tabindex="0"
                 class="sorting_1"
                 :class="col.textAlign?col.textAlign:'align-left'"
@@ -54,7 +54,7 @@
               >{{data[col.dataField]}}</td>
               <td v-if="selected" class="sorting_1">
                 <vs-checkbox
-                  :checked="isSelected"
+                  :checked="isSelected||data.isSelected"
                   size="small"
                   @input.native="onChangeSelectedRow(data)"
                 />
@@ -135,7 +135,6 @@ export default {
   },
   computed: {
     total() {
-      console.log(Math.ceil(this.totalPage / 20));
       return Math.ceil(this.totalPage / 20);
     }
   },
@@ -184,14 +183,18 @@ export default {
 
     onChangeSelectedRow(dataRow) {
       let me = this;
+      let deleteArray = [];
       if (event.target.checked) {
+        dataRow.isSelected = true;
         me.isSelectedAll.push(dataRow);
       } else {
+        dataRow.isSelected = false;
         var x = me.isSelectedAll.indexOf(dataRow);
         me.isSelectedAll.splice(x, 1);
-        console.log(me.isSelectedAll);
-        console.log(x);
+        deleteArray = [dataRow];
       }
+      me.$emit("changeGrid", me.isSelectedAll, deleteArray);
+
       me.$emit("input", me.isSelectedAll);
     },
     /**
@@ -199,31 +202,45 @@ export default {
      */
     onChangeSelected(data) {
       let me = this;
+      let deleteArray = [];
       if (event.target.checked) {
         me.isSelectedAll = me.datasource;
         me.isSelected = true;
       } else {
+        deleteArray = me.datasource;
         me.isSelectedAll = [];
         me.isSelected = false;
       }
+      me.$emit("changeGrid", me.isSelectedAll, deleteArray);
       me.$emit("input", me.isSelectedAll);
     },
-    onClickOpen(event) {
+    onClickOpen(event, dataRow) {
+      let me = this;
       let el = event.currentTarget.parentElement;
       var sibling = el.nextSibling;
       // .classList.contains("child");
       //event.currentTarget.nextSibling.classList.add("child")
       //event.currentTarget.nextSibling.classList.remove("child")
+      let deleteArray = [];
       if (
         sibling.classList.contains("child") &&
         sibling.style.display != "none"
       ) {
         el.classList.remove("parent");
         sibling.style.display = "none";
+        dataRow.isSelected = false;
+        var x = me.isSelectedAll.indexOf(dataRow);
+        me.isSelectedAll.splice(x, 1);
+        deleteArray = [dataRow];
       } else {
         sibling.style.display = "table-row";
         el.classList.add("parent");
+        me.isSelectedAll.push(dataRow);
+        dataRow.isSelected = true;
       }
+      me.$emit("changeGrid", me.isSelectedAll, deleteArray);
+
+      me.$emit("input", me.isSelectedAll);
     },
     onMouseDown(event) {
       let me = this;

@@ -7,9 +7,10 @@
         <div class="t-date-wrap t-button-wrap mb-12-px flex flex-end">
           <div class="mr-12-px">Khoảng thời gian</div>
           <div class="mr-12-px">
-            <vs-select v-model="valueCombox">
+            <!-- <vs-select v-model="valueCombox">
               <vs-select-item text="Hôm nay" value="toDay"></vs-select-item>
-            </vs-select>
+            </vs-select>-->
+            <daterange />
           </div>
           <div class="mr-12-px">Từ ngày</div>
           <div class="w-130-px mr-12-px">
@@ -71,6 +72,7 @@
             v-model="selectedRows"
             :columnConfig="columns"
             :datasource="data"
+            @changeGrid="changeGrid"
           >
             <template slot="contentsub" slot-scope="{ dataRow }">
               <!-- Ve chi tiet tung xe 1  -->
@@ -91,8 +93,8 @@
                     <div>{{dataRow.nbStops}}</div>
                     <div>{{dataRow.start}}</div>
                     <div>{{dataRow.end}}</div>
-                    <div>Tổng quảng đường di chuyển:</div>
-                    <div>Tổng thời gian di chuyển (dự kiến):</div>
+                    <div>{{dataRow.distances|formatDistance}}</div>
+                    <div>{{dataRow.duration|formatDuration}}</div>
                   </div>
                 </div>
 
@@ -103,6 +105,8 @@
                     v-for="(node,index) in dataRow.nodes"
                     :key="index"
                   >
+                    <div class="view-map" @click="viewMap(node)"></div>
+                    <!-- <button@click="viewMap(node)">viewMap</button> -->
                     <div class="step-content-icon">
                       <img src="@/assets/pin.png" alt />
                     </div>
@@ -162,7 +166,7 @@ export default {
         START_TRUCK: "Đến bãi chứa truck",
         START_MOOC: "Đến bãi chưa mooc",
         START_CONT: "Đến bãi container",
-        WAREHOUSE: "Đến nhà khp",
+        WAREHOUSE: "Đến nhà kho",
         END_TRUCK: "Trở về bãi chứa truck",
         PORT: "Đến cảng"
       },
@@ -179,32 +183,124 @@ export default {
   },
   watch: {
     selectedRows() {
-      this.displayDirection();
+      // this.displayDirection();
+    }
+  },
+  filters: {
+    formatDistance(val) {
+      return Math.floor(val / 1000) + "km" + " " + Math.ceil(val % 1000) + "m";
+    },
+    formatDuration(val) {
+      return Math.floor(val / 60) + "giờ " + Math.ceil(val % 60) + " phút";
     }
   },
   methods: {
+    //Kiểm tra ô nhập liệu đã
+    viewMap(node) {
+      console.log(node);
+      let marker = node.marker;
+      if (marker) {
+        if (marker.infowindow) {
+          marker.infowindow.open(marker.getMap(), marker);
+        } else {
+          var me = this;
+          var content = marker.content;
+
+          var id = "div-" + content.code;
+          var actionName = me.mapTypeAction[content.action],
+            address = content.address[0].address,
+            truck = "",
+            container = "",
+            mooc = "",
+            step = content.step;
+          content.truck.instance.forEach(item => {
+            if (item.type == "TRUCK") truck = item.name;
+          });
+          content.container.forEach(item => {
+            if (item.type == "CONTAINER") container = item.name;
+          });
+          content.mooc.forEach(item => {
+            if (item.type == "MOOC") mooc = item.name;
+          });
+          var div = ` <div class="info-detail">
+        <div class="row-detail flex">
+          <div class="title-lable">
+            <div>Hành động :</div>
+            <div>Địa chỉ:</div>
+            <div>Truck:</div>
+            <div>Container:</div>
+            <div>Mooc:</div>
+            <div>Chặng số:</div>
+            <div>Thời gian d/c:</div>
+            <div>Khoảng cách:</div>
+          </div>
+          <div class="row-content">
+            <div>${actionName}</div>
+            <div>${address}</div>
+            <div>${truck}</div>
+            <div>${container}</div>
+            <div>${mooc}</div>
+            <div>${step}</div>
+            <div>${content.duration ? content.duration.text : ""}</div>
+            <div>${content.distance ? content.distance.text : ""}</div>
+          </div>
+        </div>
+      
+      </div>`;
+          var infowindow = new google.maps.InfoWindow({
+            content: div,
+            maxWidth: 350
+          });
+          marker.infowindow = infowindow;
+          infowindow.open(marker.getMap(), marker);
+
+          google.maps.event.addListener(marker.getMap(), "click", function() {
+            infowindow.close();
+          });
+        }
+      }
+    },
+    //Thay đổi trên grid
+
+    changeGrid(isSelectedAll, deleteArray) {
+      let me = this;
+      deleteArray.forEach(element => {
+        var nodes = element.nodes;
+        var i = 0;
+        for (; i < nodes.length - 1; i++) {
+          if (element.nodes[i].pathArray != undefined) {
+            me.$refs.google.clearPath(
+              element.nodes[i].pathArray,
+              element.nodes[i].marker
+            );
+          }
+        }
+      });
+      me.displayDirection(isSelectedAll);
+    },
     /**
      * Tìm kiếm các truck đã được lập lịch
      */
     search() {},
     openHere(event, marker) {
-      console.log(marker);
       var me = this;
       var content = marker.content;
-      console.log(content);
 
       var id = "div-" + content.code;
       var actionName = me.mapTypeAction[content.action],
         address = content.address[0].address,
-        truck = content.truck,
+        truck = "",
         container = "",
         mooc = "",
         step = content.step;
+      content.truck.instance.forEach(item => {
+        if (item.type == "TRUCK") truck = item.name;
+      });
       content.container.forEach(item => {
-        if (item.type == "CONTAINER") container = item;
+        if (item.type == "CONTAINER") container = item.name;
       });
       content.mooc.forEach(item => {
-        if (item.type == "MOOC") mooc = item;
+        if (item.type == "MOOC") mooc = item.name;
       });
       var div = ` <div class="info-detail">
       <div class="row-detail flex">
@@ -215,14 +311,18 @@ export default {
           <div>Container:</div>
           <div>Mooc:</div>
           <div>Chặng số:</div>
+          <div>Thời gian d/c:</div>
+          <div>Khoảng cách:</div>
         </div>
         <div class="row-content">
           <div>${actionName}</div>
           <div>${address}</div>
-          <div>${truck.instance.name}</div>
-          <div>${container.name}</div>
-          <div>${mooc.name}</div>
+          <div>${truck}</div>
+          <div>${container}</div>
+          <div>${mooc}</div>
           <div>${step}</div>
+          <div>${content.duration ? content.duration.text : ""}</div>
+          <div>${content.distance ? content.distance.text : ""}</div>
         </div>
       </div>
     
@@ -231,6 +331,7 @@ export default {
         content: div,
         maxWidth: 350
       });
+      marker.infowindow = infowindow;
       infowindow.open(marker.getMap(), marker);
 
       google.maps.event.addListener(marker.getMap(), "click", function() {
@@ -240,33 +341,48 @@ export default {
     /**
      * Hiển thị các quãng đường đi của mỗi truck
      */
-    displayDirection() {
-      let me = this,
-        data = me.selectedRows;
+    displayDirection(data) {
+      let me = this;
       for (var item in data) {
-        if (item > 0) break;
         var nodes = data[item].nodes;
 
         var color = me.getRandomColor();
         var i = 0;
+        if (data[item].distances == undefined) {
+          data[item].distances = 0;
+        }
+        if (data[item].duration == undefined) {
+          data[item].duration = 0;
+        }
         for (; i < nodes.length - 1; i++) {
-          // setTimeout(function(){{}})
           var origin = nodes[i].address[0].latLng;
           var des = nodes[i + 1].address[0].latLng;
-          // console.log(origin);
-          // // sleep(1000);
 
           var content = { ...nodes[i] };
           content.truck = data[item].truck;
           content.step = i + 1;
-          var marker = me.$refs.google.createdMarker(
-            origin,
-            this.mapTypeIcon[nodes[i].action],
-            content,
-            null
-          );
-          me.markerList.push(marker);
-          me.$refs.google.calcRoute(origin, des, color);
+
+          if (data[item].nodes[i].pathArray == undefined) {
+            var marker = me.$refs.google.createdMarker(
+              origin,
+              this.mapTypeIcon[nodes[i].action],
+              content,
+              null
+            );
+            data[item].nodes[i].marker = marker;
+            me.$refs.google.calcRoute(
+              origin,
+              des,
+              color,
+              data[item].nodes[i],
+              data[item]
+            );
+          } else {
+            me.$refs.google.setPathMap(
+              data[item].nodes[i].pathArray,
+              data[item].nodes[i].marker
+            );
+          }
         }
         var content = { ...nodes[i] };
         content.step = i + 1;
@@ -294,7 +410,6 @@ export default {
      * Thực hiện tính inputjson
      */
     truckCode(val) {
-      console.log(val);
       var truck = val.truck.instance;
       for (var i = 0; i < truck.length; i++) {
         if (truck[i].type == "TRUCK") {
@@ -334,6 +449,9 @@ export default {
             obj.truckName = me.truckName(element);
             obj.start = me.start(element);
             obj.end = me.end(element);
+            obj.isSelected = false;
+            obj.duration = 0;
+            obj.distances = 0;
             me.data.push(obj);
           });
           me.processing = false;

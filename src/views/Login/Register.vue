@@ -38,11 +38,18 @@ import registerForm from "@/views/Login/RegisterForm";
 import confirmForm from "@/views/Login/ConfirmForm";
 import login from "@/views/Login/LoginForm";
 export default {
+  mounted() {
+    let userId = localStorage.getItem("userId");
+    if (userId) {
+      this.registerForm = confirmForm;
+      this.step = 2;
+    }
+  },
   data() {
     return {
       step: 1,
       registerForm: registerForm,
-         id: null
+      id: null
     };
   },
   watch: {

@@ -1,5 +1,6 @@
 <template>
   <div class="wrap_content p-24-px">
+    <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
       <div class="main-title flex align-center">
         <div class="mr-12-px">Danh sách {{title}}</div>
@@ -22,7 +23,7 @@
             <vs-th class="align-left w-120-px">KHO</vs-th>
             <vs-th class="align-left w-120-px" v-if="isPort">CẢNG</vs-th>
             <vs-th class="align-left w-120-px">CONTAINER</vs-th>
-            <vs-th class="align-left w-120-px">TRỌNG TẢI</vs-th>
+            <vs-th class="align-left w-120-px" v-if="isPort">TRỌNG TẢI</vs-th>
             <vs-th class="align-center w-200-px">TG ĐẾN SỚM NHẤT</vs-th>
             <vs-th class="align-center w-200-px">TG ĐẾN MUỘN NHẤT</vs-th>
             <vs-th class="align-center w-200-px">TG VẬN CHUYỂN SỚM NHẤT</vs-th>
@@ -54,6 +55,7 @@
               <vs-td
                 class="align-left w-120-px"
                 :data="data[indextr].quantity"
+                v-if="isPort"
               >{{ data[indextr].weight||0 }} tấn</vs-td>
               <vs-td
                 class="align-center w-200-px"
@@ -78,11 +80,11 @@
 
               <vs-td>
                 <div class="flex icon-feature flex">
-                  <div @click="Edit(dataRow)">
+                  <div @click="Edit(tr)">
                     <i class="fas fa-edit icon-feature-detail"></i>
                   </div>
                   <div class="icon-feature-detail">/</div>
-                  <div @click="Delete(dataRow)">
+                  <div @click="Delete(tr)">
                     <i class="far fa-trash-alt icon-feature-detail"></i>
                   </div>
                 </div>
@@ -140,6 +142,7 @@ export default {
   extends: BaseRequestList,
   data() {
     return {
+      queryString: "",
       selected: []
     };
   },
@@ -177,6 +180,21 @@ export default {
     }
   },
   methods: {
+    search() {
+      let me = this;
+      if (me.queryString) {
+        var url =
+          "http://localhost:9000/CustomerRequest/search?type=" +
+          me.type +
+          "&queryString=" +
+          me.queryString;
+        me.api.getAll(url).then(result => {
+          me.data = result.data.data.data;
+        });
+      } else {
+        me.load(me.type);
+      }
+    },
     handleSelected(tr) {
       this.currentTr = tr;
     },

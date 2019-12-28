@@ -1,29 +1,37 @@
 <template>
   <div class="wrap_content p-24-px">
+    <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
-      <div class="main-title flex">
-        <div class="wrap-font-warning">
-          <i class="fas font-warning fa-exclamation-circle"></i>
-          Chọn từng dòng chi tiết để tạo chuyến lập lịch
+      <div class="flex t-button-wrap custom-style">
+        <div class="mr-12-px">Khoảng thời gian</div>
+        <div class="mr-12-px">
+          <vs-select v-model="valueCombox">
+            <vs-select-item text="Hôm nay" value="toDay"></vs-select-item>
+          </vs-select>
         </div>
+        <div class="mr-12-px">Từ ngày</div>
+        <div class="w-130-px mr-12-px">
+          <date :useTime="false" v-model="date" />
+        </div>
+        <div class="mr-12-px">Đến ngày</div>
+        <div class="w-130-px mr-12-px">
+          <date :useTime="false" v-model="date" />
+        </div>
+        <div>
+          <vs-button color="#c1c1c1" class="mr-8-px" type="border">Lọc</vs-button>
+        </div>
+
         <div class="t-date-wrap t-button-wrap mb-12-px flex flex-end">
-          <div class="mr-12-px">
-            <t-input
-              @keydown.enter="search"
-              v-model="queryString"
-              placeholder="Nhập tên, mã, địa chỉ để tìm kiếm"
-            />
-          </div>
-          <div class="mr-12-px">Thời gian lập Y/C</div>
-          <div class="w-130-px mr-12-px">
-            <date :useTime="false" v-model="date" />
-          </div>
           <div class>
             <!-- <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewAllMap()" type="border">Xem toàn cảnh</vs-button>
             <vs-button color="#c1c1c1" class="mr-8-px" @click="ViewMap" type="border">Xem</vs-button> --->
             <vs-button color="rgb(26, 115, 232)" @click="computedData" type="filled">Tạo tuyến</vs-button>
           </div>
         </div>
+      </div>
+      <div class="wrap-font-warning">
+        <i class="fas font-warning fa-exclamation-circle"></i>
+        Chọn từng dòng chi tiết để tạo chuyến lập lịch
       </div>
       <div class="wrap-table">
         <vs-table
@@ -106,28 +114,31 @@
       </div>
       <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
         <div class="line"></div>
+
         <div class="flex align-end">
+          <div class="lable-page">Hiển thị {{data.length}} trên {{totalPage}}</div>
           <div
             class="paginate_button previous disabled"
             aria-controls="example"
             data-dt-idx="0"
             tabindex="-1"
             id="example_previous"
+            :class="{'disabled-button':activeIndex==1}"
+            @click="previousPage"
           >
             <img src="@/assets/previous.png" alt srcset />
           </div>
           <div class="flex">
             <div
+              v-for="i in total"
               class="paginate_button current"
               aria-controls="example"
               data-dt-idx="1"
               tabindex="0"
-            >1</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">2</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">3</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">4</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">5</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="6" tabindex="0">6</div>
+              :key="i"
+              :class="{'active-page':activeIndex==i}"
+              @click="activePage(i)"
+            >{{i}}</div>
           </div>
           <div
             class="paginate_button next"
@@ -135,6 +146,8 @@
             data-dt-idx="7"
             tabindex="0"
             id="example_next"
+            @click="nextPage"
+            :class="{'disabled-button':activeIndex==total}"
           >
             <img src="@/assets/next.png" alt srcset />
           </div>
@@ -151,6 +164,12 @@ export default {
   //   extends: BaseList,
   data() {
     return {
+      processing: true,
+      valueCombox: "toDay",
+      date: new Date(2019, 10, 11),
+      pageSize: 5,
+      activeIndex: 1,
+      totalPage: 0,
       selected: [],
       data: [],
       api: api,
@@ -519,15 +538,48 @@ export default {
       }
       this.convertRequest();
       console.log(JSON.stringify(this.dataEntity));
+    },
+
+    getPaging(date, pageIndex, pageSize = 20) {
+      var url = `http://localhost:9000/CustomerRequest/getAllDayPaging?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+      var me = this;
+      me.processing = true;
+      this.api
+        .post(url, date)
+        .then(result => {
+          me.data = result.data.data.data;
+          me.totalPage = result.data.data.totalPage;
+          me.processing = false;
+        })
+        .catch(err => {
+          me.processing = false;
+        });
+    },
+    nextPage() {
+      if (this.activeIndex != this.total) {
+        this.activeIndex++;
+        this.$emit("activeIndex", this.activeIndex);
+      }
+    },
+    previousPage() {
+      if (this.activeIndex != 1) {
+        this.activeIndex--;
+        this.getPaging(this.date, this.activeIndex, this.pageSize);
+      }
+    },
+    activePage(index) {
+      this.activeIndex = index;
+      this.getPaging(this.date, this.activeIndex, this.pageSize);
     }
   },
   mounted() {
-    var url = "http://localhost:9000/CustomerRequest/getAllDay";
     var date = new Date(2019, 10, 11);
-    var me = this;
-    this.api.post(url, date).then(result => {
-      me.data = result.data.data;
-    });
+    this.getPaging(date, 1, this.pageSize);
+  },
+  computed: {
+    total() {
+      return Math.ceil(this.totalPage / this.pageSize);
+    }
   }
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="wrap_content p-24-px">
+    <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
       <div class="main-title flex align-center">
         <div class="mr-12-px">Danh sách Đầu kéo</div>
@@ -152,6 +153,8 @@ import api from "@/api/DetailAPI";
 export default {
   data() {
     return {
+      processing: true,
+      queryString: "",
       api: api,
       selected: [],
       entityData: {},
@@ -165,15 +168,43 @@ export default {
   },
 
   methods: {
+    search() {
+      let me = this;
+      if (me.queryString) {
+        this.processing = true;
+        var url =
+          "http://localhost:9000/instance/search?type=TRUCK" +
+          "&queryString=" +
+          me.queryString;
+        me.api
+          .getAll(url)
+          .then(result => {
+            me.data = result.data.data.data;
+            this.processing = false;
+          })
+          .catch(err => {
+            this.processing = false;
+          });
+      } else {
+        me.load("TRUCK");
+      }
+    },
     handleSelected(tr) {
       this.currentTr = tr;
     },
     load(type) {
       var me = this;
+      this.processing = true;
       var url = "http://localhost:9000/instance/getType/:" + type;
-      this.api.getAll(url).then(result => {
-        me.data = result.data.data;
-      });
+      this.api
+        .getAll(url)
+        .then(result => {
+          me.data = result.data.data.data;
+          this.processing = false;
+        })
+        .catch(err => {
+          this.processing = false;
+        });
     },
     Cancel() {
       this.open = false;
@@ -188,7 +219,7 @@ export default {
           me.open = true;
           me.mode = Enum.Mode.Add;
           me.entityData.type = "TRUCK";
-          me.entityData.code = result.data.data[0];
+          me.entityData.code = result.data.data.data[0];
           // me.entityData.address = result.data.data[0];
         } else {
           alert("Không tìm thấy thực thể");
@@ -232,6 +263,7 @@ export default {
       }
     },
     Delete(tr) {
+      let me = this;
       this.$vs.dialog({
         type: "confirm",
         color: " rgb(26, 115, 232)",

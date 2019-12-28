@@ -34,21 +34,21 @@
                     </div>
                     
                 </div>
-                <div class='flex mb-12-px  ' v-if="isPort">
+                <div class='flex mb-12-px  ' v-show="isPort">
                     <div class=" mr-8-px ">
                       
-                      <combobox    @selected='onSelectedPort'  v-model="entityData.portCode" title='Cảng' isServer urlPath='http://localhost:9000/entity/getType/:PORT' fieldValue='id' fieldText='name'/>
+                      <combobox    @selected='onSelectedPort'  v-model="entityData.portCode" title='Cảng' isServer urlPath='http://localhost:9000/entity/getType/:PORT' fieldValue='id' fieldText='code'/>
                     
                     </div>
                     <div class="">
-                      <combobox  @selected='onSelectedWarehouse' v-model="entityData.warehouseCode" title='Kho' isServer urlPath='http://localhost:9000/entity/getType/:WAREHOUSE' fieldValue='id' fieldText='name'/>
+                    <combobox  @selected='onSelectedWarehouse'  v-model="entityData.warehouseCode" title='Kho' isServer urlPath='http://localhost:9000/entity/getType/:WAREHOUSE' fieldValue='id' fieldText='code'/>
                     
                     </div>
                 </div>
-                <div class='flex mb-12-px  ' v-if="!isPort">
+                <div class='flex mb-12-px ' v-show='!isPort'>
                    
                     <div class="mr-8-px">
-                      <combobox  @selected='onSelectedWarehouse'  v-model="entityData.warehouseCode" title='Kho' isServer urlPath='http://localhost:9000/entity/getType/:WAREHOUSE' fieldValue='id' fieldText='name'/>
+                      <combobox  @selected='onSelectedWarehouse'  v-model="entityData.warehouseCode" title='Kho' isServer urlPath='http://localhost:9000/entity/getType/:WAREHOUSE' fieldValue='id' fieldText='code'/>
                     
                     </div>
                     <div class="w-200-px ">
@@ -135,7 +135,7 @@ export default {
         me.port.setMap(null);
       }
       this.port = me.$refs.map.$refs.map.createdMarker(
-        data.latlng,
+        data.latLng,
         null,
         null,
         false
@@ -147,7 +147,7 @@ export default {
         me.warehouse.setMap(null);
       }
       this.warehouse = me.$refs.map.$refs.map.createdMarker(
-        data.latlng,
+        data.latLng,
         null,
         null,
         false
@@ -184,7 +184,7 @@ export default {
     onReady() {
       let me = this;
 
-      // me.loadDepot();
+      me.loadDepot();
     },
     selectedEvent(data) {
       console.log(data);
@@ -196,7 +196,7 @@ export default {
       me.marker = [];
       this.api.getAll(url).then(result => {
         if (me.isPort) {
-          var arr = result.data.data.filter(
+          var arr = result.data.data.data.filter(
             i => i.type == "PORT" || i.type == "WAREHOUSE"
           );
 
@@ -213,7 +213,7 @@ export default {
             }
           });
         } else {
-          var arr = result.data.data.filter(i => i.type == "WAREHOUSE");
+          var arr = result.data.data.data.filter(i => i.type == "WAREHOUSE");
           arr.forEach(function(item) {
             if (item.latLng) {
               me.latlng = item.latLng;

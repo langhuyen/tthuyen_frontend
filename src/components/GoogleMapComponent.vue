@@ -32,6 +32,7 @@ export default {
   name: "GoogleMapComponent",
   data() {
     return {
+      pathArray: {},
       map: null,
       google: null,
       overlay: null
@@ -108,6 +109,10 @@ export default {
 
       return marker1;
     },
+    //Thực hiện lại  đường đi.
+    setPathMap() {},
+    //Xóa đường đi trên bản đồ.
+    clearPath() {},
 
     //Hàm vẽ mũi tên chỉ đường
     createdArrow(path, color) {

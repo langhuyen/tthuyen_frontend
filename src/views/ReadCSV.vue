@@ -340,7 +340,7 @@ export default {
         readXlsxFile(files[key]).then(rows => {
           // `rows` is an array of rows
           // each row being an array of cells.
-          debugger;
+
           console.log("tag", rows);
           rows.forEach(function(item, index) {
             if (index == 0) return;

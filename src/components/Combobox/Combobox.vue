@@ -68,7 +68,7 @@ export default {
       me.api
         .getAll(url)
         .then(result => {
-          result.data.data.forEach(item => {
+          result.data.data.data.forEach(item => {
             let objItem = {
               ...item,
               text: item[me.fieldText],

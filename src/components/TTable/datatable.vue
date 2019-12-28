@@ -71,37 +71,45 @@
     </div>
     <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
       <div class="line"></div>
-      <div class="flex align-end">
-        <div
-          class="paginate_button previous disabled"
-          aria-controls="example"
-          data-dt-idx="0"
-          tabindex="-1"
-          id="example_previous"
-        >
-          <img src="@/assets/previous.png" alt srcset />
-        </div>
-        <div class="flex">
+
+      <div class="flex">
+        <div class="class-load"></div>
+        <div class="flex align-end flex-1">
+          <div class="lable-page">Hiển thị {{datasource.length}} trên {{totalPage}}</div>
           <div
-            class="paginate_button current"
+            class="paginate_button previous disabled"
             aria-controls="example"
-            data-dt-idx="1"
+            data-dt-idx="0"
+            tabindex="-1"
+            id="example_previous"
+            :class="{'disabled-button':activeIndex==1}"
+            @click="previousPage"
+          >
+            <img src="@/assets/previous.png" alt srcset />
+          </div>
+          <div class="flex">
+            <div
+              v-for="i in total"
+              class="paginate_button current"
+              aria-controls="example"
+              data-dt-idx="1"
+              tabindex="0"
+              :key="i"
+              :class="{'active-page':activeIndex==i}"
+              @click="activePage(i)"
+            >{{i}}</div>
+          </div>
+          <div
+            class="paginate_button next"
+            aria-controls="example"
+            data-dt-idx="7"
             tabindex="0"
-          >1</div>
-          <div class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">2</div>
-          <div class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">3</div>
-          <div class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">4</div>
-          <div class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">5</div>
-          <div class="paginate_button" aria-controls="example" data-dt-idx="6" tabindex="0">6</div>
-        </div>
-        <div
-          class="paginate_button next"
-          aria-controls="example"
-          data-dt-idx="7"
-          tabindex="0"
-          id="example_next"
-        >
-          <img src="@/assets/next.png" alt srcset />
+            id="example_next"
+            @click="nextPage"
+            :class="{'disabled-button':activeIndex==total}"
+          >
+            <img src="@/assets/next.png" alt srcset />
+          </div>
         </div>
       </div>
     </div>
@@ -116,6 +124,7 @@ export default {
   components: { TrTree },
   data() {
     return {
+      activeIndex: 1,
       parentEl: null,
       currentPointer: 0,
       currentWidth: 0,
@@ -124,7 +133,20 @@ export default {
       currentPage: ""
     };
   },
+  computed: {
+    total() {
+      console.log(Math.ceil(this.totalPage / 20));
+      return Math.ceil(this.totalPage / 20);
+    }
+  },
   props: {
+    size: {
+      default: 20
+    },
+
+    totalPage: {
+      default: 0
+    },
     datasource: {
       type: Array
     },
@@ -137,6 +159,22 @@ export default {
     }
   },
   methods: {
+    nextPage() {
+      if (this.activeIndex != this.total) {
+        this.activeIndex++;
+        this.$emit("activeIndex", this.activeIndex);
+      }
+    },
+    previousPage() {
+      if (this.activeIndex != 1) {
+        this.activeIndex--;
+        this.$emit("activeIndex", this.activeIndex);
+      }
+    },
+    activePage(index) {
+      this.activeIndex = index;
+      this.$emit("activeIndex", index);
+    },
     dblclick(data) {
       this.$emit("dblclick", event, data);
     },
@@ -261,8 +299,7 @@ export default {
   destroyed() {
     let me = this;
     window.removeEventListener("mouseup", me.onMouseUp);
-  },
-  computed: {}
+  }
 };
 </script>
 

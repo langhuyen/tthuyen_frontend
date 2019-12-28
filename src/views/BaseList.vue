@@ -30,13 +30,15 @@ export default {
     search() {
       let me = this;
       if (me.queryString) {
+        this.processing = true;
         var url =
           "http://localhost:9000/entity/search?type=" +
           me.type +
           "&queryString=" +
           me.queryString;
         me.api.getAll(url).then(result => {
-          me.data = result.data.data;
+          me.data = result.data.data.data;
+          this.processing = false;
         });
       } else {
         me.load(me.type);
@@ -44,13 +46,15 @@ export default {
     },
     ViewAllMap() {
       var me = this;
+      this.processing = true;
       var url = "http://localhost:9000/entity/get";
       this.api.getAll(url).then(result => {
-        me.data = result.data.data;
+        me.data = result.data.data.data;
+        this.processing = false;
         me.$router.push({
           name: "BaseView",
           params: {
-            data: result.data.data
+            data: result.data.data.data
           }
         });
       });
@@ -99,10 +103,22 @@ export default {
     },
     load(type) {
       var me = this;
-      var url = "http://localhost:9000/entity/getType/:" + type;
-      this.api.getAll(url).then(result => {
-        me.data = result.data.data;
-      });
+      me.getPaging(1);
+    },
+    getPaging(pageIndex, pageSize = 20) {
+      this.processing = true;
+      var me = this;
+      var url = `http://localhost:9000/entity/getTypePaging/:${me.type}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+      this.api
+        .getAll(url)
+        .then(result => {
+          me.data = result.data.data.data;
+          me.totalPage = result.data.data.totalPage;
+          this.processing = false;
+        })
+        .catch(err => {
+          this.processing = false;
+        });
     }
   }
 };

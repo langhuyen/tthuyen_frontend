@@ -1,18 +1,34 @@
 <template>
   <div class="wrap_content p-24-px">
+    <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
       <div class="main-title flex">
-        Danh sách
+        Danh sách xe lập lịch
         <div class="t-date-wrap t-button-wrap mb-12-px flex flex-end">
+          <div class="mr-12-px">Khoảng thời gian</div>
           <div class="mr-12-px">
-            <t-input
-              @keydown.enter="search"
-              v-model="queryString"
-              placeholder="Nhập tên, mã, địa chỉ để tìm kiếm"
-            />
+            <vs-select v-model="valueCombox">
+              <vs-select-item text="Hôm nay" value="toDay"></vs-select-item>
+            </vs-select>
           </div>
-          <div class="mr-12-px">Ngày lập lịch</div>
-          <date :useTime="false" v-model="date" />
+          <div class="mr-12-px">Từ ngày</div>
+          <div class="w-130-px mr-12-px">
+            <date :useTime="false" v-model="date" />
+          </div>
+          <div class="mr-12-px">Đến ngày</div>
+          <div class="w-130-px mr-12-px">
+            <date :useTime="false" v-model="date" />
+          </div>
+          <div>
+            <vs-button color="#c1c1c1" class="mr-8-px" type="border">Lọc</vs-button>
+          </div>
+        </div>
+      </div>
+      <div class="wrap-font-warning mb-12-px">
+        <i class="fas font-warning fa-exclamation-circle"></i>
+        <div class="align-left">
+          <div>Chọn từng dòng chi tiết để hiển thị lộ trình trên bản đô.</div>
+          <div>Click vào marker trên bản đồ để xem chi tiếp từng điểm dừng</div>
         </div>
       </div>
 
@@ -50,7 +66,12 @@
       </vs-table>-->
       <div class="flex">
         <div style="height:437px" class="w-1/2 mr-12-px">
-          <datatable v-model="selectedRows" :columnConfig="columns" :datasource="data">
+          <datatable
+            :totalPage="totalPage"
+            v-model="selectedRows"
+            :columnConfig="columns"
+            :datasource="data"
+          >
             <template slot="contentsub" slot-scope="{ dataRow }">
               <!-- Ve chi tiet tung xe 1  -->
               <div class="info-detail">
@@ -92,7 +113,7 @@
                       </div>
                       <div class="flex">
                         <div class="title-lable">Địa chỉ :</div>
-                        <div class="row-content">{{node.address[0].address}}</div>
+                        <div class="row-content">{{node.address[0]?node.address[0].address:''}}</div>
                       </div>
                     </div>
                   </div>
@@ -116,6 +137,9 @@ export default {
   //   extends: BaseList,
   data() {
     return {
+      processing: true,
+      valueCombox: "toDay",
+      totalPage: 0,
       queryString: "",
       date: new Date(),
       selected: [],
@@ -293,24 +317,35 @@ export default {
     end(val) {
       var end = val.nodes[val.nodes.length - 1];
       return end.address[0].address;
+    },
+    load() {
+      var url = "http://localhost:9000/transport/getRouter";
+      var date = new Date();
+      var me = this;
+      me.processing = true;
+      this.api
+        .getAll(url)
+        .then(result => {
+          // me.totalPage = result.result.data //
+          // me.data = result.data;
+          result.data.forEach(element => {
+            var obj = { ...element };
+            obj.truckCode = me.truckCode(element);
+            obj.truckName = me.truckName(element);
+            obj.start = me.start(element);
+            obj.end = me.end(element);
+            me.data.push(obj);
+          });
+          me.processing = false;
+        })
+        .catch(err => {
+          me.processing = false;
+        });
     }
   },
 
   mounted() {
-    var url = "http://localhost:9000/transport/getRouter";
-    var date = new Date(2019, 10, 11);
-    var me = this;
-    this.api.getAll(url).then(result => {
-      // me.data = result.data;
-      result.data.forEach(element => {
-        var obj = { ...element };
-        obj.truckCode = me.truckCode(element);
-        obj.truckName = me.truckName(element);
-        obj.start = me.start(element);
-        obj.end = me.end(element);
-        me.data.push(obj);
-      });
-    });
+    this.load();
   }
 };
 </script>

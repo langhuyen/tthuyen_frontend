@@ -11,6 +11,9 @@
       </div>
       <div class="error" v-if="error">{{error}}</div>
       <div class="register-form">
+        <div class="flex align-end">
+          <div @click="sendTokenEmail" class="class-load"></div>
+        </div>
         <div class="mb-12-px">
           <t-input v-model="tokenEmail" placeholder="Mã" title="Mã" @keydown.enter="confirm" />
         </div>
@@ -30,18 +33,27 @@ export default {
     };
   },
   methods: {
+    sendTokenEmail() {
+      let me = this;
+      let userId = localStorage.getItem("userId");
+      if (userId) {
+        var url = "http://localhost:9000/user/sendTokenEmail?userId=" + userId;
+        this.api.post(url);
+      }
+    },
     confirm() {
       let me = this;
+      let userId = localStorage.getItem("userId");
       if (me.validData()) {
         this.error = "";
         var url =
           "http://localhost:9000/user/verifyUser?id=" +
-          me.$parent.id +
+          userId +
           "&tokenEmail=" +
           me.tokenEmail;
         this.api.post(url).then(result => {
           if (result.data.code == 0) {
-            if (result.data.data[0]) {
+            if (result.data.data.data[0]) {
               me.$emit("input", 3);
             } else {
               me.error = "Mã xác thực không đúng.Xin thử lại";

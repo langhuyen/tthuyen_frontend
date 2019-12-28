@@ -8,6 +8,7 @@ import Enum from "@/ulties/enumrable.js";
 export default {
   data() {
     return {
+      processing: true,
       data: [],
       api: api,
       currentTr: {},
@@ -26,13 +27,15 @@ export default {
   methods: {
     ViewAllMap() {
       var me = this;
+      this.processing = true;
       var url = "http://localhost:9000/CustomerRequest/get";
       this.api.getAll(url).then(result => {
-        me.data = result.data.data;
+        me.data = result.data.data.data;
+        this.processing = false;
         me.$router.push({
           name: "BaseView",
           params: {
-            data: result.data.data
+            data: result.data.data.data
           }
         });
       });
@@ -47,6 +50,7 @@ export default {
       });
     },
     Delete(tr) {
+      let me = this;
       this.$vs.dialog({
         type: "confirm",
         color: " rgb(26, 115, 232)",
@@ -75,10 +79,20 @@ export default {
     },
     load(type) {
       var me = this;
-      var url = "http://localhost:9000/CustomerRequest/getType/:" + type;
-      this.api.getAll(url).then(result => {
-        me.data = result.data.data;
-      });
+      this.processing = true;
+      var url =
+        "http://localhost:9000/CustomerRequest/getTypePaging/:" +
+        type +
+        "?pageIndex=1&pageSize=20";
+      this.api
+        .getAll(url)
+        .then(result => {
+          me.data = result.data.data.data;
+          this.processing = false;
+        })
+        .catch(err => {
+          this.processing = false;
+        });
     }
   }
 };

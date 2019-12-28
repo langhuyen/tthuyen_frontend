@@ -1,10 +1,23 @@
 <template>
   <div class="wrap_content p-24-px">
+    <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
-      <div class="main-title">Danh sách Mooc</div>
-      <div class="t-button-wrap mb-12-px">
-        <vs-button color="rgb(26, 115, 232)" @click="Add()" type="filled">Thêm mới</vs-button>
+      <div class="main-title">
+        <div class="main-title flex align-center">
+          <div class="mr-12-px">Danh sách Mooc</div>
+          <div>
+            <t-input
+              @keydown.enter="search"
+              v-model="queryString"
+              placeholder="Nhập tên, mã để tìm kiếm"
+            />
+          </div>
+          <div class="t-button-wrap mb-12-px flex flex-end">
+            <vs-button color="rgb(26, 115, 232)" @click="Add" type="filled">Thêm mới</vs-button>
+          </div>
+        </div>
       </div>
+
       <div class="wrap-table">
         <vs-table v-model="selected" @selected="handleSelected" :data="data">
           <template slot="thead">
@@ -153,6 +166,8 @@ import api from "@/api/DetailAPI";
 export default {
   data() {
     return {
+      processing: true,
+      queryString: "",
       api: api,
       selected: [],
       entityData: {},
@@ -166,15 +181,43 @@ export default {
   },
 
   methods: {
+    search() {
+      let me = this;
+      if (me.queryString) {
+        this.processing = true;
+        var url =
+          "http://localhost:9000/instance/search?type=MOOC" +
+          "&queryString=" +
+          me.queryString;
+        me.api
+          .getAll(url)
+          .then(result => {
+            me.data = result.data.data.data;
+            this.processing = false;
+          })
+          .catch(err => {
+            this.processing = false;
+          });
+      } else {
+        me.load("MOOC");
+      }
+    },
     handleSelected(tr) {
       this.currentTr = tr;
     },
     load(type) {
       var me = this;
+      this.processing = true;
       var url = "http://localhost:9000/instance/getType/:" + type;
-      this.api.getAll(url).then(result => {
-        me.data = result.data.data;
-      });
+      this.api
+        .getAll(url)
+        .then(result => {
+          me.data = result.data.data.data;
+          this.processing = false;
+        })
+        .catch(err => {
+          this.processing = false;
+        });
     },
     Cancel() {
       this.open = false;
@@ -190,7 +233,7 @@ export default {
           me.mode = Enum.Mode.Add;
           me.entityData = {};
           me.entityData.type = "MOOC";
-          me.entityData.code = result.data.data[0];
+          me.entityData.code = result.data.data.data[0];
           // me.entityData.address = result.data.data[0];
         } else {
           alert("Không tìm thấy thực thể");
@@ -234,6 +277,7 @@ export default {
       }
     },
     Delete(tr) {
+      let me = this;
       this.$vs.dialog({
         type: "confirm",
         color: " rgb(26, 115, 232)",

@@ -54,12 +54,12 @@ export default {
         };
         this.api.post(url, entity).then(result => {
           if (result.data.code == 0) {
-            localStorage.setItem("userId", result.data.data[0].id);
-            localStorage.setItem("userName", result.data.data[0].username);
-            me.$parent.id = result.data.data[0].id;
+            localStorage.setItem("userId", result.data.data.data[0].id);
+            localStorage.setItem("userName", result.data.data.data[0].username);
+            me.$parent.id = result.data.data.data[0].id;
             me.$emit("input", 2);
           } else {
-            me.error = result.data.data[0].validation;
+            me.error = result.data.data.data[0].validation;
           }
         });
       }

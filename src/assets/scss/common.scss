@@ -245,3 +245,68 @@ table {
     display: flex;
     align-items: center;
 }
+.lable-page{
+    margin-right: 16px;
+    margin-top: 8px;
+}
+.active-page{
+    background:#4285f4;
+    color: white;
+}
+.disabled-button{
+    opacity: 0.4;
+}
+ .custom-style{
+     
+     align-items: center;
+ }
+
+ .t-date-wrap{
+     font-weight: normal;
+     color: #212121;
+ }
+ .class-load{
+        background: 0;
+    width: 32px;
+    height: 32px;
+    background-size: 32px;
+    background-image: url(/img/load.29629ede.png);
+    background-repeat: no-repeat;
+       cursor: pointer;
+ }
+
+ footer {
+    padding: 16px;
+}
+footer button.vs-component.vs-button.vs-button-null.vs-button-filled{
+    margin-right: 12px;
+}
+
+.vuesax-app-is-ltr .con-vs-dialog .vs-dialog header span.after {
+    display: none;
+}
+
+
+.loader {
+  border: 5px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 5px solid #3498db;
+  width: 52px;
+  height: 52px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 40%;
+left: 50%;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

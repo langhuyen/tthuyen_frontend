@@ -1,5 +1,6 @@
 <template>
   <div class="wrap_content p-24-px">
+    <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
       <div class="main-title flex align-center">
         <div class="mr-12-px">Danh sách {{title}}</div>
@@ -32,6 +33,8 @@
       <div class="flex" style="height:437px">
         <div style="height:437px" class="w-1/2 mr-12-px">
           <datatable
+            @activeIndex="changePageIndex"
+            :totalPage="totalPage"
             @select="selectedTable"
             v-model="selectedRows"
             :datasource="data"
@@ -81,6 +84,9 @@ export default {
   extends: BaseList,
   data() {
     return {
+      processing: true,
+      pageSize: 20,
+      totalPage: 0,
       queryString: "",
       selectedRows: [],
       selected: [],
@@ -109,12 +115,11 @@ export default {
       }
     };
   },
-  watch: {
-    // selectedRows(currentTr, old) {
-    //   debugger;
-    // }
-  },
+  watch: {},
   methods: {
+    changePageIndex(index) {
+      this.getPaging(index, this.pageSize);
+    },
     onUpdateLocation(event, marker) {
       var me = this;
       var mapType = {

@@ -42,8 +42,13 @@ export default {
   },
   watch: {
     value(val) {
-      this.valueInput = val;
+      if (this.valueInput != val) {
+        this.valueInput = val;
+      }
       // this.$emit("input", val);
+    },
+    textArea() {
+      this.$emit("input", this.textArea);
     }
   },
   methods: {

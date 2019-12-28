@@ -254,6 +254,7 @@ export default {
   height: 30px;
   border: none;
   padding-left: 8px;
+  font-weight: normal!important;
 }
 input {
   border: none;

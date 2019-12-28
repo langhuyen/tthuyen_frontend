@@ -73,7 +73,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .login-background {
-  background: url("../../assets/background.jpg");
+  background: url("../../assets/background.png");
   display: flex;
   justify-content: center;
   align-items: center;

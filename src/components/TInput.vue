@@ -49,7 +49,6 @@ export default {
   },
   watch: {
     value(val) {
-      debugger;
       this.valueInput = val;
       // this.$emit("input", val);
     }
@@ -96,6 +95,7 @@ export default {
   border: 1px solid #ebebeb;
   border-radius: 5px;
   padding: 3px 10px;
+  font-weight: normal !important;
 }
 .t-input-content:hover {
   border: 1px solid rgba(0, 0, 0, 0.4);
@@ -105,24 +105,28 @@ export default {
   font-style: italic;
   font-size: 12px;
   color: #cccccc;
+  font-weight: normal !important;
 }
 .t-input-content::-moz-placeholder {
   /* Firefox 19+ */
   font-style: italic;
   font-size: 12px;
   color: #cccccc;
+  font-weight: normal !important;
 }
 .t-input-content:-ms-input-placeholder {
   /* IE 10+ */
   font-style: italic;
   font-size: 12px;
   color: #cccccc;
+  font-weight: normal !important;
 }
 .t-input-content:-moz-placeholder {
   /* Firefox 18- */
   font-style: italic;
   font-size: 12px;
   color: #cccccc;
+  font-weight: normal !important;
 }
 .t-input-focus {
   border: 1px solid rgb(26, 115, 232);

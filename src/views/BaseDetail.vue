@@ -108,7 +108,7 @@ export default {
       var url = "http://localhost:9000/AutoGenerateCode/:" + this.type;
       this.api.getAll(url).then(result => {
         if (result.data.code == 0) {
-          me.entityData.code = result.data.data[0];
+          me.entityData.code = result.data.data.data[0];
           // me.entityData.address = result.data.data[0];
         } else {
           alert("Không tìm thấy thực thể");
@@ -122,7 +122,7 @@ export default {
           .getById("http://localhost:9000/entity/detail", this.key)
           .then(result => {
             if (result.data.code == 0) {
-              me.entityData = result.data.data[0];
+              me.entityData = result.data.data.data[0];
               me.setdefaultMarker();
             } else {
               alert("Không tìm thấy thực thể");

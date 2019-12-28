@@ -13,11 +13,11 @@ var Enum = {
             Value: "WAREHOUSE"
         },
         DEPOTTRAILER: {
-            Title: "Mooc",
+            Title: "Bãi chứa Mooc",
             Value: "DEPOTTRAILER"
         },
         DEPOTTRUCK: {
-            Title: "Đầu kéo",
+            Title: "Bãi chứa Đầu kéo",
             Value: "DEPOTTRUCK"
         },
         DEPOTCONTAINER: {

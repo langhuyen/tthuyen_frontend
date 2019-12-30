@@ -1,7 +1,7 @@
 <template lang="html">
 
     <div class="t-input">
-    <div class="t-title mb-8-px">{{title}}</div>
+    <div class="t-title mb-8-px" v-if='title'>{{title}}</div>
       <vs-select @change="changeSelected" :multiple="multiple" noData="Không tìm thấy dữ liệu"  v-model='valueCombox' autocomplete>
         <vs-select-item @click="selected(item)" v-for='item in datax' :text='item.text' :value='item.value'></vs-select-item>     
         </vs-select>

@@ -10,18 +10,18 @@
             <!-- <vs-select v-model="valueCombox">
               <vs-select-item text="Hôm nay" value="toDay"></vs-select-item>
             </vs-select>-->
-            <daterange />
+            <daterange :toDate.sync="toDate" :fromDate.sync="fromDate" />
           </div>
           <div class="mr-12-px">Từ ngày</div>
           <div class="w-130-px mr-12-px">
-            <date :useTime="false" v-model="date" />
+            <date :useTime="false" v-model="fromDate" />
           </div>
           <div class="mr-12-px">Đến ngày</div>
           <div class="w-130-px mr-12-px">
-            <date :useTime="false" v-model="date" />
+            <date :useTime="false" v-model="toDate" />
           </div>
           <div>
-            <vs-button color="#c1c1c1" class="mr-8-px" type="border">Lọc</vs-button>
+            <vs-button color="#c1c1c1" class="mr-8-px" type="border" @click="load">Lọc</vs-button>
           </div>
         </div>
       </div>
@@ -66,13 +66,15 @@
         <pre>{{ selected }}</pre>
       </vs-table>-->
       <div class="flex">
-        <div style="height:437px" class="w-1/2 mr-12-px">
+        <div style="height:390px" class="w-1/2 mr-12-px">
           <datatable
+            @activeIndex="changePageIndex"
             :totalPage="totalPage"
             v-model="selectedRows"
             :columnConfig="columns"
             :datasource="data"
             @changeGrid="changeGrid"
+            :pageSize="pageSize"
           >
             <template slot="contentsub" slot-scope="{ dataRow }">
               <!-- Ve chi tiet tung xe 1  -->
@@ -105,7 +107,7 @@
                     v-for="(node,index) in dataRow.nodes"
                     :key="index"
                   >
-                    <div class="view-map" @click="viewMap(node)"></div>
+                    <div class="view-maps" @click="viewMap(node)"></div>
                     <!-- <button@click="viewMap(node)">viewMap</button> -->
                     <div class="step-content-icon">
                       <img src="@/assets/pin.png" alt />
@@ -141,6 +143,9 @@ export default {
   //   extends: BaseList,
   data() {
     return {
+      pageSize: 5,
+      toDate: new Date(),
+      fromDate: new Date(),
       processing: true,
       valueCombox: "toDay",
       totalPage: 0,
@@ -433,17 +438,27 @@ export default {
       var end = val.nodes[val.nodes.length - 1];
       return end.address[0].address;
     },
-    load() {
-      var url = "http://localhost:9000/transport/getRouter";
+    getPagingData() {},
+
+    changePageIndex(index) {
+      this.getPaging(index, this.pageSize);
+    },
+    getPaging(pageIndex, pageSize = 20) {
+      let DateParam = {
+        fromDate: new Date(this.fromDate),
+        toDate: new Date(this.toDate)
+      };
+      var url = `http://localhost:9000/transport/getRouterPaging?pageIndex=${pageIndex}&pageSize=${pageSize}`;
       var date = new Date();
       var me = this;
+      me.data = [];
       me.processing = true;
       this.api
-        .getAll(url)
+        .post(url, DateParam)
         .then(result => {
           // me.totalPage = result.result.data //
           // me.data = result.data;
-          result.data.forEach(element => {
+          result.data.data.data.forEach(element => {
             var obj = { ...element };
             obj.truckCode = me.truckCode(element);
             obj.truckName = me.truckName(element);
@@ -454,11 +469,15 @@ export default {
             obj.distances = 0;
             me.data.push(obj);
           });
+          me.totalPage = result.data.data.totalPage;
           me.processing = false;
         })
         .catch(err => {
           me.processing = false;
         });
+    },
+    load() {
+      this.getPaging(1, this.pageSize);
     }
   },
 

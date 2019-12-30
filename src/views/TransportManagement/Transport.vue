@@ -2,23 +2,21 @@
   <div class="wrap_content p-24-px">
     <div class="loader" v-if="processing"></div>
     <div class="h-content list-content p-12-px">
-      <div class="flex t-button-wrap custom-style">
+      <div class="t-date-wrap mb-12-px flex t-button-wrap custom-style">
         <div class="mr-12-px">Khoảng thời gian</div>
-        <div class="mr-12-px">
-          <vs-select v-model="valueCombox">
-            <vs-select-item text="Hôm nay" value="toDay"></vs-select-item>
-          </vs-select>
-        </div>
+
+        <daterange class="mr-12-px" :toDate.sync="toDate" :fromDate.sync="fromDate" />
+
         <div class="mr-12-px">Từ ngày</div>
         <div class="w-130-px mr-12-px">
-          <date :useTime="false" v-model="date" />
+          <date :useTime="false" v-model="fromDate" />
         </div>
         <div class="mr-12-px">Đến ngày</div>
         <div class="w-130-px mr-12-px">
-          <date :useTime="false" v-model="date" />
+          <date :useTime="false" v-model="toDate" />
         </div>
         <div>
-          <vs-button color="#c1c1c1" class="mr-8-px" type="border">Lọc</vs-button>
+          <vs-button color="#c1c1c1" class="mr-8-px" type="border" @click="load">Lọc</vs-button>
         </div>
 
         <div class="t-date-wrap t-button-wrap mb-12-px flex flex-end">
@@ -164,10 +162,12 @@ export default {
   //   extends: BaseList,
   data() {
     return {
+      toDate: new Date(),
+      fromDate: new Date(),
       processing: true,
       valueCombox: "toDay",
       date: new Date(2019, 10, 11),
-      pageSize: 5,
+      pageSize: 10,
       activeIndex: 1,
       totalPage: 0,
       selected: [],
@@ -516,35 +516,41 @@ export default {
       //Load Distance giữa các điểm
       let me = this;
       var url = "http://localhost:9000/Distance/get";
-      this.api.post(
-        "http://localhost:9000/transport/createdTrip",
-        this.selected
-      );
-      var resultDistance = await this.api.getAll(url);
-      if (resultDistance.data.code == 0) {
-        me.dataEntity.distance = resultDistance.data.data;
+      if (this.selected.length > 0) {
+        this.api.post(
+          "http://localhost:9000/transport/createdTrip",
+          this.selected
+        );
+        var resultDistance = await this.api.getAll(url);
+        if (resultDistance.data.code == 0) {
+          me.dataEntity.distance = resultDistance.data.data;
+        }
+        var resultInstance = await this.api.getAll(
+          "http://localhost:9000/instance/getInstanceFreeByType"
+        );
+        if (resultInstance.data.code == 0) {
+          this.convertToInstance(resultInstance.data.data);
+        }
+        var resultDepot = await this.api.getAll(
+          "http://localhost:9000/entity/getDepot"
+        );
+        if (resultDepot.data.code == 0) {
+          this.convertToDepot(resultDepot.data.data);
+        }
+        this.convertRequest();
       }
-      var resultInstance = await this.api.getAll(
-        "http://localhost:9000/instance/getInstanceFreeByType"
-      );
-      if (resultInstance.data.code == 0) {
-        this.convertToInstance(resultInstance.data.data);
-      }
-      var resultDepot = await this.api.getAll(
-        "http://localhost:9000/entity/getDepot"
-      );
-      if (resultDepot.data.code == 0) {
-        this.convertToDepot(resultDepot.data.data);
-      }
-      this.convertRequest();
     },
 
-    getPaging(date, pageIndex, pageSize = 20) {
+    getPaging(pageIndex, pageSize = 20) {
       var url = `http://localhost:9000/CustomerRequest/getAllDayPaging?pageIndex=${pageIndex}&pageSize=${pageSize}`;
       var me = this;
+      let DateParam = {
+        fromDate: new Date(this.fromDate),
+        toDate: new Date(this.toDate)
+      };
       me.processing = true;
       this.api
-        .post(url, date)
+        .post(url, DateParam)
         .then(result => {
           me.data = result.data.data.data;
           me.totalPage = result.data.data.totalPage;
@@ -557,23 +563,25 @@ export default {
     nextPage() {
       if (this.activeIndex != this.total) {
         this.activeIndex++;
-        this.$emit("activeIndex", this.activeIndex);
+        this.getPaging(this.activeIndex, this.pageSize);
       }
     },
     previousPage() {
       if (this.activeIndex != 1) {
         this.activeIndex--;
-        this.getPaging(this.date, this.activeIndex, this.pageSize);
+        this.getPaging(this.activeIndex, this.pageSize);
       }
     },
     activePage(index) {
       this.activeIndex = index;
-      this.getPaging(this.date, this.activeIndex, this.pageSize);
+      this.getPaging(this.activeIndex, this.pageSize);
+    },
+    load() {
+      this.getPaging(1, this.pageSize);
     }
   },
   mounted() {
-    var date = new Date(2019, 10, 11);
-    this.getPaging(date, 1, this.pageSize);
+    this.load();
   },
   computed: {
     total() {

@@ -14,7 +14,7 @@
 
     <datepicker
       class="datepicker"
-      v-if="isDatepicker"
+      v-show="isDatepicker"
       :style="{left:left,top:top,right:right}"
       ref="datepicker"
       v-model="valueDatepicker"
@@ -34,7 +34,9 @@ export default {
     title: {
       type: String
     },
-    value: {},
+    value: {
+      type: [Date, String]
+    },
     useTime: {
       default: true,
       type: Boolean
@@ -109,10 +111,13 @@ export default {
   watch: {
     value(val) {
       this.valueDate = this.formatDate(val);
+      this.valueDatepicker = val;
     },
     valueDatepicker(val) {
-      this.valueDate = this.formatDate(val);
-      this.$emit(`input`, val);
+      if (this.valueDate != this.formatDate(val)) {
+        this.valueDate = this.formatDate(val);
+        this.$emit(`input`, val);
+      }
     }
   },
   directives: {
@@ -251,13 +256,13 @@ export default {
   height: 30px;
   border: none;
   padding-left: 8px;
-  font-weight: normal!important;
+  font-weight: normal !important;
 }
 input {
   border: none;
 }
 .FormDate {
-  border: 1px solid #a8a8a8;
+  border: 1px solid #e5e5e5;
   display: flex;
   widows: 100%;
 }

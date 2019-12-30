@@ -31,7 +31,7 @@
       </div>
 
       <div class="flex" style="height:437px">
-        <div style="height:437px" class="w-1/2 mr-12-px">
+        <div style="height:390px" class="w-1/2 mr-12-px">
           <datatable
             @activeIndex="changePageIndex"
             :totalPage="totalPage"

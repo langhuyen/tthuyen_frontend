@@ -135,10 +135,13 @@ export default {
   },
   computed: {
     total() {
-      return Math.ceil(this.totalPage / 20);
+      return Math.ceil(this.totalPage / this.pageSize);
     }
   },
   props: {
+    pageSize: {
+      default: 20
+    },
     size: {
       default: 20
     },
@@ -297,7 +300,7 @@ export default {
         thead.querySelectorAll("th").forEach(element => {
           element.style.transform = "translateY(" + y + "px)";
           element.style["-webkit-transform"] = "translateY(" + y + "px)";
-          element.style["z-index"] = 40001;
+          element.style["z-index"] = 10;
           element.style.background = "#ccc";
         });
       } else {

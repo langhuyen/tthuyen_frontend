@@ -139,6 +139,9 @@ export default {
     }
   },
   props: {
+    load: {
+      type: Function
+    },
     pageSize: {
       default: 20
     },

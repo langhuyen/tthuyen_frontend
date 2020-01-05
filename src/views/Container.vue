@@ -20,7 +20,12 @@
         </div>
       </div>
       <div class="wrap-table">
-        <vs-table v-model="selected" @selected="handleSelected" :data="data">
+        <vs-table
+          v-model="selected"
+          @selected="handleSelected"
+          :data="data"
+          noDataText="Không có dữ liệu"
+        >
           <template slot="thead">
             <vs-th class="align-left">MÃ</vs-th>
             <vs-th class="align-left">TÊN</vs-th>
@@ -56,49 +61,58 @@
       </div>
       <div class="dataTables_paginate paging_simple_numbers" id="example_paginate">
         <div class="line"></div>
-        <div class="flex align-end">
-          <div
-            class="paginate_button previous disabled"
-            aria-controls="example"
-            data-dt-idx="0"
-            tabindex="-1"
-            id="example_previous"
-          >
-            <img src="@/assets/previous.png" alt srcset />
-          </div>
-          <div class="flex">
+
+        <div class="flex">
+          <div class="class-load"></div>
+          <div class="flex align-end flex-1">
+            <div class="lable-page">Hiển thị {{data.length}} trên {{totalPage}}</div>
             <div
-              class="paginate_button current"
+              class="paginate_button previous disabled"
               aria-controls="example"
-              data-dt-idx="1"
+              data-dt-idx="0"
+              tabindex="-1"
+              id="example_previous"
+              :class="{'disabled-button':activeIndex==1}"
+              @click="previousPage"
+            >
+              <img src="@/assets/previous.png" alt srcset />
+            </div>
+            <div class="flex">
+              <div
+                v-for="i in total"
+                class="paginate_button current"
+                aria-controls="example"
+                data-dt-idx="1"
+                tabindex="0"
+                :key="i"
+                :class="{'active-page':activeIndex==i}"
+                @click="activePage(i)"
+              >{{i}}</div>
+            </div>
+            <div
+              class="paginate_button next"
+              aria-controls="example"
+              data-dt-idx="7"
               tabindex="0"
-            >1</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="2" tabindex="0">2</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="3" tabindex="0">3</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="4" tabindex="0">4</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="5" tabindex="0">5</div>
-            <div class="paginate_button" aria-controls="example" data-dt-idx="6" tabindex="0">6</div>
-          </div>
-          <div
-            class="paginate_button next"
-            aria-controls="example"
-            data-dt-idx="7"
-            tabindex="0"
-            id="example_next"
-          >
-            <img src="@/assets/next.png" alt srcset />
+              id="example_next"
+              @click="nextPage"
+              :class="{'disabled-button':activeIndex==total}"
+            >
+              <img src="@/assets/next.png" alt srcset />
+            </div>
           </div>
         </div>
       </div>
     </div>
     <t-popup @close="entityData={}" title="Thêm Container" :active.sync="open">
+      <div class="error mt-12-px" v-if="error">{{error}}</div>
       <div class="mb-12-px w-full">
         <div class="flex">
           <div class="w-1/2 mr-12-px">
-            <t-input v-model="entityData.code" title="Mã" />
+            <t-input v-model="entityData.code" ref="code" required title="Mã" />
           </div>
           <div class="w-1/2 mr-12-px">
-            <t-input v-model="entityData.name" title="Tên" />
+            <t-input v-model="entityData.name" ref="name" required title="Tên / Ký hiệu" />
           </div>
         </div>
       </div>
@@ -131,7 +145,13 @@
       <div class="mb-12-px w-full">
         <div class="flex">
           <div class="w-1/2 mr-12-px">
-            <t-input type="number" v-model="entityData.weight" title="Trọng tải (tấn)" />
+            <t-input
+              type="number"
+              v-model="entityData.weight"
+              ref="weight"
+              required
+              title="Trọng tải (tấn)"
+            />
           </div>
         </div>
       </div>
@@ -151,6 +171,7 @@ import api from "@/api/DetailAPI";
 export default {
   data() {
     return {
+      error: null,
       processing: true,
       queryString: "",
       api: api,
@@ -158,14 +179,68 @@ export default {
       entityData: {},
       open: false,
       mode: Enum.Mode.Edit,
-      data: []
+      data: [],
+      activeIndex: 1,
+      pageSize: 1,
+      type: "CONTAINER",
+      totalPage: 0
     };
   },
   mounted() {
-    this.load("CONTAINER");
+    this.load(this.type);
+  },
+  computed: {
+    total() {
+      return Math.ceil(this.totalPage / this.pageSize);
+    }
   },
 
   methods: {
+    validate() {
+      var data = this.entityData;
+      if (
+        data.code == undefined ||
+        data.code == null ||
+        data.code.trim() == ""
+      ) {
+        this.error = "Mã không được bỏ trống";
+        this.$refs.code.setError(this.error);
+        return false;
+      }
+      if (
+        data.name == undefined ||
+        data.name == null ||
+        data.name.trim() == ""
+      ) {
+        this.error = "Tên / Ký hiệu không được bỏ trống";
+        this.$refs.name.setError(this.error);
+        return false;
+      }
+      if (
+        data.returnDepotCodes == undefined ||
+        data.returnDepotCodes == null ||
+        data.returnDepotCodes.length < 1
+      ) {
+        this.error = "Bãi chứa Container trả về không được bỏ trống";
+
+        return false;
+      }
+      if (
+        data.depotLocationCode == undefined ||
+        data.depotLocationCode == null
+      ) {
+        this.error = "Bãi chứa Container không được bỏ trống";
+        return false;
+      }
+
+      if (data.weight == undefined || data.weight == null) {
+        this.error = "Trọng tải không được bỏ trống";
+        this.$refs.weight.setError(this.error);
+        return false;
+      }
+
+      return true;
+    },
     handleSelected(tr) {
       this.currentTr = tr;
     },
@@ -190,19 +265,44 @@ export default {
         me.load("CONTAINER");
       }
     },
-    load(type) {
-      var me = this;
+    nextPage() {
+      if (this.activeIndex != this.total) {
+        this.activeIndex++;
+        this.getPaging(this.activeIndex, this.pageSize);
+      }
+    },
+    previousPage() {
+      if (this.activeIndex != 1) {
+        this.activeIndex--;
+        this.getPaging(this.activeIndex, this.pageSize);
+      }
+    },
+    activePage(index) {
+      this.activeIndex = index;
+      this.getPaging(this.activeIndex, this.pageSize);
+    },
+
+    getPaging(pageIndex, pageSize = 20) {
       this.processing = true;
-      var url = "http://localhost:9000/instance/getType/:" + type;
+      var me = this;
+      var url = `http://localhost:9000/instance/getTypePaging/:${me.type}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
       this.api
         .getAll(url)
         .then(result => {
-          me.data = result.data.data.data;
+          if (result.data.data.data) {
+            me.data = result.data.data.data;
+            me.totalPage = result.data.data.totalPage;
+          } else {
+            me.data = [];
+          }
           this.processing = false;
         })
         .catch(err => {
           this.processing = false;
         });
+    },
+    load(type) {
+      this.getPaging(1, this.pageSize);
     },
     Cancel() {
       this.open = false;
@@ -210,6 +310,7 @@ export default {
     },
     Add() {
       let me = this;
+      me.error = null;
 
       /**
        * them du lieu code
@@ -230,38 +331,42 @@ export default {
     },
     AddAndClose() {
       var me = this;
-      if (this.mode == Enum.Mode.Add) {
-        this.api
-          .insert("http://localhost:9000/instance/insert", this.entityData)
-          .then(result => {
-            if (result.data.code == 0) {
-              this.$vs.notify({
-                title: "Thêm mới thành công",
-                color: "success",
-                position: "top-center"
-              });
-              this.load("CONTAINER");
-              this.open = false;
-              me.entityData = {};
-            } else {
-              this.$vs.notify({
-                title: "Thêm mới thất bại",
-                color: "red",
-                position: "top-center"
-              });
-            }
-          })
-          .catch(err => {});
-      } else if (this.mode == Enum.Mode.Edit) {
-        this.api
-          .update("http://localhost:9000/instance/update", this.entityData)
-          .then(result => {
-            if (result.data.code == 0) {
-              me.entityData = {};
-              this.load("CONTAINER");
-              this.open = false;
-            }
-          });
+
+      if (this.validate()) {
+        me.error = null;
+        if (this.mode == Enum.Mode.Add) {
+          this.api
+            .insert("http://localhost:9000/instance/insert", this.entityData)
+            .then(result => {
+              if (result.data.code == 0) {
+                this.$vs.notify({
+                  title: "Thêm mới thành công",
+                  color: "success",
+                  position: "top-center"
+                });
+                this.load("CONTAINER");
+                this.open = false;
+                me.entityData = {};
+              } else {
+                this.$vs.notify({
+                  title: "Thêm mới thất bại",
+                  color: "red",
+                  position: "top-center"
+                });
+              }
+            })
+            .catch(err => {});
+        } else if (this.mode == Enum.Mode.Edit) {
+          this.api
+            .update("http://localhost:9000/instance/update", this.entityData)
+            .then(result => {
+              if (result.data.code == 0) {
+                me.entityData = {};
+                this.load("CONTAINER");
+                this.open = false;
+              }
+            });
+        }
       }
     },
     Delete(tr) {
@@ -285,7 +390,7 @@ export default {
       });
     },
     Edit(tr) {
-      this.entityData = tr;
+      this.entityData = { ...tr };
       this.open = true;
       this.mode = Enum.Mode.Edit;
     }

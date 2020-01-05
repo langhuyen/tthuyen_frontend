@@ -1,6 +1,6 @@
 <template>
   <div class="t-input">
-    <div v-if="title" class="t-title mb-8-px">{{title}}</div>
+    <div v-if="title" :title="title" class="t-title mb-8-px">{{title}}</div>
     <div ref="formDate" class="FormDate">
       <input
         class="date-input-content"

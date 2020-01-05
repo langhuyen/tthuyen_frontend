@@ -10,24 +10,24 @@
             </div>
             <div class="wrap-font-warning mb-12-px">
               <i class="fas font-warning fa-exclamation-circle"></i>
-              <div class="align-center">
-                  <div> Nhập địa chỉ sau đó sử dụng marker để điều</div>
+            <div class="align-center">
+                <div> Nhập địa chỉ sau đó sử dụng marker để điều</div>
                 <div>chỉnh vị trí trên bản đồ nếu chưa đúng.</div>
               </div>
            </div>
-         
+             <div class="error mt-12-px" v-if="error">{{error}}</div>
 
             
             <div class="mb-12-px w-full">
 
-              <t-input v-model='entityData.code' title='Mã'/>
+              <t-input ref='code' required v-model='entityData.code' title='Mã'/>
             </div>
             <div class="mb-12-px w-full">
 
               <t-input v-model='entityData.name' title='Tên'/>
             </div>
             <div class="mb-12-px w-full">
-              <t-input v-model='entityData.address' @change='changeAdrress' title='Địa chỉ'/>
+              <t-input ref='address' required v-model='entityData.address' @change='changeAdrress' title='Địa chỉ'/>
             </div>
             <div class="mb-12-px w-full">
               <t-textarea v-model='entityData.description' title='Ghi chú'/>
@@ -58,6 +58,7 @@ export default {
   mounted() {},
   data() {
     return {
+      error: null,
       address: "ha noi",
       code: "00102",
       latlng: { lat: 21.0278, lng: 105.8342 },
@@ -93,20 +94,26 @@ export default {
         data.code == null ||
         data.code.trim() == ""
       ) {
+        this.error = "Mã không được bỏ trống";
+        this.$refs.code.setError(this.error);
         return false;
       }
-      if (
-        data.name == undefined ||
-        data.name == null ||
-        data.name.trim() == ""
-      ) {
-        return false;
-      }
+
       if (
         data.address == undefined ||
         data.address == null ||
         data.address.trim() == ""
       ) {
+        this.error = "Địa chỉ không được bỏ trống";
+        this.$refs.address.setError(this.error);
+        return false;
+      }
+      if (
+        data.latLng == undefined ||
+        data.latLng == null ||
+        data.latLng.lat == undefined
+      ) {
+        this.error = "Chưa xác định được tọa độ địa chỉ. Bạn vui lòng thử lại";
         return false;
       }
       return true;
@@ -173,3 +180,6 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+</style>

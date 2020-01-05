@@ -16,7 +16,13 @@
         </div>
       </div>
       <div class="wrap-table">
-        <vs-table class="scoll" v-model="selected" @selected="handleSelected" :data="data">
+        <vs-table
+          class="scoll"
+          v-model="selected"
+          @selected="handleSelected"
+          :data="data"
+          noDataText="Không có dữ liệu"
+        >
           <template slot="thead">
             <!-- <vs-th>MÃ</vs-th> -->
             <vs-th class="align-left w-120-px">MÃ</vs-th>
@@ -29,6 +35,7 @@
             <vs-th class="align-center w-200-px">TG VẬN CHUYỂN SỚM NHẤT</vs-th>
             <vs-th class="align-center w-200-px">TG VẬN CHUYỂN MUỘN NHẤT</vs-th>
             <vs-th class="align-left w-300-px">GHI CHÚ</vs-th>
+            <vs-th class="align-left w-300-px">TRẠNG THÁI</vs-th>
             <vs-th class="align-center w-120-px">CHỨC NĂNG</vs-th>
           </template>
 
@@ -77,6 +84,10 @@
                 class="align-left w-300-px"
                 :data="data[indextr].quantity"
               >{{ data[indextr].description }}</vs-td>
+              <vs-td
+                class="align-left w-300-px"
+                :data="data[indextr].isSchedule"
+              >{{ data[indextr].schedule|status }}</vs-td>
 
               <vs-td>
                 <div class="flex icon-feature flex">
@@ -154,6 +165,9 @@ export default {
     }
   },
   filters: {
+    status(value) {
+      return value ? "Đã lập lịch" : "Chưa lập lịch";
+    },
     formatDate(val) {
       let valuedate = new Date(val);
       let date =

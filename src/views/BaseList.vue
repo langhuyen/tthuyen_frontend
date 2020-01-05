@@ -77,7 +77,7 @@ export default {
         title: `Xác nhận`,
         acceptText: "Đồng ý",
         cancelText: "Hủy bỏ",
-        text: `Bạn có muốn xóa không ${tr.name}`,
+        text: `Bạn có muốn xóa không ${me.title} ${tr.name || ""}`,
         accept: function() {
           me.acceptDelete(tr);
         }

@@ -43,36 +43,38 @@ export default {
     //Thêm dữ liệu lên serve
     Add() {
       var me = this;
-      if (this.mode == Enum.Mode.Add) {
-        this.api
-          .insert("http://localhost:9000/entity/insert", this.entityData)
-          .then(result => {
-            if (result.data.code == 0) {
-              this.$vs.notify({
-                title: "Thêm mới thành công",
-                color: "success",
-                position: "top-center"
-              });
-              me.entityData = {};
-              me.getAutoId();
-            } else {
-              this.$vs.notify({
-                title: "Thêm mới thất bại",
-                color: "red",
-                position: "top-center"
-              });
-            }
-          })
-          .catch(err => {});
-      } else if (this.mode == Enum.Mode.Edit) {
-        this.api
-          .update("http://localhost:9000/entity/update", this.entityData)
-          .then(result => {
-            if (result.data.code == 0) {
-              me.entityData = {};
-              me.getAutoId();
-            }
-          });
+      if (this.validate()) {
+        if (this.mode == Enum.Mode.Add) {
+          this.api
+            .insert("http://localhost:9000/entity/insert", this.entityData)
+            .then(result => {
+              if (result.data.code == 0) {
+                me.$vs.notify({
+                  title: "Thêm mới thành công",
+                  color: "success",
+                  position: "top-center"
+                });
+                me.entityData = {};
+                me.getAutoId();
+              } else {
+                me.$vs.notify({
+                  title: "Thêm mới thất bại",
+                  color: "red",
+                  position: "top-center"
+                });
+              }
+            })
+            .catch(err => {});
+        } else if (this.mode == Enum.Mode.Edit) {
+          this.api
+            .update("http://localhost:9000/entity/update", this.entityData)
+            .then(result => {
+              if (result.data.code == 0) {
+                me.entityData = {};
+                me.getAutoId();
+              }
+            });
+        }
       }
     },
     Cancel() {
@@ -81,24 +83,26 @@ export default {
     },
     AddAndClose() {
       var me = this;
-      if (this.mode == Enum.Mode.Add) {
-        var type = me.type;
-        this.api
-          .insert("http://localhost:9000/entity/insert", this.entityData)
-          .then(result => {
-            if (result.data.code == 0) {
-              me.$router.push("/entity/" + me.type);
-            }
-          });
-      } else if (this.mode == Enum.Mode.Edit) {
-        var type = me.type;
-        this.api
-          .update("http://localhost:9000/entity/update", this.entityData)
-          .then(result => {
-            if (result.data.code == 0) {
-              me.$router.push("/entity/" + me.type);
-            }
-          });
+      if (this.validate()) {
+        if (this.mode == Enum.Mode.Add) {
+          var type = me.type;
+          this.api
+            .insert("http://localhost:9000/entity/insert", this.entityData)
+            .then(result => {
+              if (result.data.code == 0) {
+                me.$router.push("/entity/" + me.type);
+              }
+            });
+        } else if (this.mode == Enum.Mode.Edit) {
+          var type = me.type;
+          this.api
+            .update("http://localhost:9000/entity/update", this.entityData)
+            .then(result => {
+              if (result.data.code == 0) {
+                me.$router.push("/entity/" + me.type);
+              }
+            });
+        }
       }
     },
     Edit() {},

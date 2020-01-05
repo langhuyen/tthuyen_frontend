@@ -42,8 +42,8 @@ export default {
   },
   watch: {
     value(val) {
-      if (this.valueInput != val) {
-        this.valueInput = val;
+      if (this.textArea != val) {
+        this.textArea = val;
       }
       // this.$emit("input", val);
     },
@@ -58,7 +58,10 @@ export default {
     },
     onBlur(e) {
       this.focus = false;
-      if (this.required && this.valueInput.trim().length == 0) {
+      if (
+        this.required &&
+        (!this.textArea || this.textArea.trim().length == 0)
+      ) {
         this.setError(this.title + " Không được bỏ trống");
       }
     },

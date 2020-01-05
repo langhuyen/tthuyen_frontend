@@ -13,7 +13,9 @@ import api from "@/api/DetailAPI";
 export default {
   watch: {
     value(value) {
-      this.valueCombox = value;
+      if (this.valueCombox != value) {
+        this.valueCombox = this.value ? this.value : "";
+      }
     },
     valueCombox(value) {
       this.$emit("input", value);

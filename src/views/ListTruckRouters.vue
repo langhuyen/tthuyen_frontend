@@ -186,6 +186,7 @@ export default {
       markerList: []
     };
   },
+
   watch: {
     selectedRows() {
       // this.displayDirection();
@@ -229,28 +230,41 @@ export default {
           });
           var div = ` <div class="info-detail">
         <div class="row-detail flex">
-          <div class="title-lable">
-            <div>Hành động :</div>
-            <div>Địa chỉ:</div>
-            <div>Truck:</div>
-            <div>Container:</div>
-            <div>Mooc:</div>
-            <div>Chặng số:</div>
-            <div>Thời gian d/c:</div>
-            <div>Khoảng cách:</div>
-          </div>
-          <div class="row-content">
-            <div>${actionName}</div>
-            <div>${address}</div>
-            <div>${truck}</div>
-            <div>${container}</div>
-            <div>${mooc}</div>
-            <div>${step}</div>
-            <div>${content.duration ? content.duration.text : ""}</div>
-            <div>${content.distance ? content.distance.text : ""}</div>
-          </div>
+            <div class="title-lable"> Hành động: </div>
+            <div class="row-content">${actionName}</div>
         </div>
-      
+        <div class="row-detail flex">
+            <div class="title-lable"> Địa chỉ: </div>
+            <div class="row-content">${address}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Truck: </div>
+            <div class="row-content">${truck}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Container: </div>
+            <div class="row-content">${container}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Mooc: </div>
+            <div class="row-content">${mooc}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Chặng số: </div>
+            <div class="row-content">${step}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Thời gian d/c: </div>
+            <div class="row-content">${
+              content.duration ? content.duration.text : ""
+            }</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Khoảng cách: </div>
+            <div class="row-content">${
+              content.distance ? content.distance.text : ""
+            }</div>
+        </div>
       </div>`;
           var infowindow = new google.maps.InfoWindow({
             content: div,
@@ -308,26 +322,41 @@ export default {
         if (item.type == "MOOC") mooc = item.name;
       });
       var div = ` <div class="info-detail">
-      <div class="row-detail flex">
-        <div class="title-lable">
-          <div>Hành động :</div>
-          <div>Địa chỉ:</div>
-          <div>Truck:</div>
-          <div>Container:</div>
-          <div>Mooc:</div>
-          <div>Chặng số:</div>
-          <div>Thời gian d/c:</div>
-          <div>Khoảng cách:</div>
+     <div class="row-detail flex">
+            <div class="title-lable"> Hành động: </div>
+            <div class="row-content">${actionName}</div>
         </div>
-        <div class="row-content">
-          <div>${actionName}</div>
-          <div>${address}</div>
-          <div>${truck}</div>
-          <div>${container}</div>
-          <div>${mooc}</div>
-          <div>${step}</div>
-          <div>${content.duration ? content.duration.text : ""}</div>
-          <div>${content.distance ? content.distance.text : ""}</div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Địa chỉ: </div>
+            <div class="row-content">${address}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Truck: </div>
+            <div class="row-content">${truck}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Container: </div>
+            <div class="row-content">${container}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Mooc: </div>
+            <div class="row-content">${mooc}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Chặng sSố: </div>
+            <div class="row-content">${step}</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Thời gian d/c: </div>
+            <div class="row-content">${
+              content.duration ? content.duration.text : ""
+            }</div>
+        </div>
+        <div class="row-detail flex">
+            <div class="title-lable"> Khoảng cách: </div>
+            <div class="row-content">${
+              content.distance ? content.distance.text : ""
+            }</div>
         </div>
       </div>
     
@@ -458,6 +487,7 @@ export default {
         .then(result => {
           // me.totalPage = result.result.data //
           // me.data = result.data;
+          me.processing = false;
           result.data.data.data.forEach(element => {
             var obj = { ...element };
             obj.truckCode = me.truckCode(element);
@@ -470,13 +500,12 @@ export default {
             me.data.push(obj);
           });
           me.totalPage = result.data.data.totalPage;
-          me.processing = false;
         })
         .catch(err => {
           me.processing = false;
         });
     },
-    load() {
+    load(type) {
       this.getPaging(1, this.pageSize);
     }
   },

@@ -37,6 +37,7 @@
           :multiple="data==null||data.length==0?false:true"
           @selected="handleSelected"
           :data="data"
+          noDataText="Không có dữ liệu"
         >
           <template slot="thead">
             <!-- <vs-th>MÃ</vs-th> -->
@@ -515,29 +516,29 @@ export default {
     async computedData() {
       //Load Distance giữa các điểm
       let me = this;
-      var url = "http://localhost:9000/Distance/get";
       if (this.selected.length > 0) {
-        this.api.post(
-          "http://localhost:9000/transport/createdTrip",
-          this.selected
-        );
-        var resultDistance = await this.api.getAll(url);
-        if (resultDistance.data.code == 0) {
-          me.dataEntity.distance = resultDistance.data.data;
-        }
-        var resultInstance = await this.api.getAll(
-          "http://localhost:9000/instance/getInstanceFreeByType"
-        );
-        if (resultInstance.data.code == 0) {
-          this.convertToInstance(resultInstance.data.data);
-        }
-        var resultDepot = await this.api.getAll(
-          "http://localhost:9000/entity/getDepot"
-        );
-        if (resultDepot.data.code == 0) {
-          this.convertToDepot(resultDepot.data.data);
-        }
-        this.convertRequest();
+        this.api
+          .post("http://localhost:9000/transport/createdTrip", this.selected)
+          .then(result => {
+            if (result.data.data) {
+              this.$vs.notify({
+                title:
+                  "Tạo chuyến thành công. Hãy vào mục quản lý đầu kéo để xem kết quả",
+                color: "success",
+                position: "top-center"
+              });
+            } else {
+              this.$vs.notify({
+                title: "Tạo chuyến thất bại. Hãy thử lại",
+                color: "red",
+                position: "top-center"
+              });
+            }
+            me.getPaging(1);
+          })
+          .catch(err => {
+            me.getPaging(1);
+          });
       }
     },
 

@@ -1,5 +1,6 @@
 <template>
   <div class="register-background">
+    <div class="loader" v-if="processing"></div>
     <div class="register-content flex">
       <div class="register-logo">
         <img src="@/assets/logo.png" alt />
@@ -8,6 +9,9 @@
       <div class="sub-title mt-12-px">
         <pre> Mã xác thực được gửi tới email mà bạn đã đăng ký!
               Vui lòng điền mã xác thực để xác thực</pre>
+        <div class="sub-title">
+          <a @click="backToRegister">Đăng ký</a> tài khoản
+        </div>
       </div>
       <div class="error" v-if="error">{{error}}</div>
       <div class="register-form">
@@ -29,16 +33,42 @@ export default {
     return {
       tokenEmail: "",
       error: null,
-      api: api
+      api: api,
+      processing: false
     };
   },
   methods: {
     sendTokenEmail() {
       let me = this;
+      this.processing = true;
       let userId = localStorage.getItem("userId");
       if (userId) {
         var url = "http://localhost:9000/user/sendTokenEmail?userId=" + userId;
-        this.api.post(url);
+        this.api
+          .post(url)
+          .then(result => {
+            me.processing = false;
+            this.$vs.notify({
+              title: "Gửi mã xác thực thành công. Hãy kiểm tra email.",
+              color: "success",
+              position: "top-center"
+            });
+          })
+          .catch(err => {
+            this.$vs.notify({
+              title: "Gửi mã xác thực thất bại. Vui lòng thử lại sau.",
+              color: "red",
+              position: "top-center"
+            });
+            me.processing = false;
+          });
+      } else {
+        this.$vs.notify({
+          title: "Gửi mã xác thực thất bại. Vui lòng thử lại sau.",
+          color: "red",
+          position: "top-center"
+        });
+        this.processing = false;
       }
     },
     confirm() {
@@ -66,6 +96,10 @@ export default {
     },
     validData() {
       return true;
+    },
+    backToRegister() {
+      let me = this;
+      me.$emit("input", 1);
     }
   }
 };

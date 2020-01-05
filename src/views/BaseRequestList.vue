@@ -65,7 +65,8 @@ export default {
     },
     acceptUpdate(tr) {
       var url = "http://localhost:9000/CustomerRequest/delete";
-      this.api.delete(url, tr);
+      let data = { id: tr.id };
+      this.api.delete(url, data);
       this.load(this.type);
     },
     Add() {

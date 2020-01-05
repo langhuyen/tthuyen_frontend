@@ -8,29 +8,29 @@
             
           <div class='flex'>
             <div class='w-408-px  mr-20-px'>
-            
+                  <div class="error mt-12-px" v-if="error">{{error}}</div>
                 <div class="mb-12-px w-200-px ">
 
-                  <t-input v-model='entityData.code' title='Mã'/>
+                  <t-input ref='code' required v-model='entityData.code' title='Mã'/>
                 </div>
               
                 <div class='flex mb-12-px  '>
 
                     <div class="w-200-px mr-8-px">
-                    <date v-model="entityData.earlyPickupDateTime" title='TG đến sớm nhất'/>
+                    <date  ref='earlyPickupDateTime' required v-model="entityData.earlyPickupDateTime" title='TG đến sớm nhất'/>
                     </div>
                     <div class='w-200-px'>
-                    <date v-model="entityData.latePickupDateTime" title='TG đến  muộn nhất'/>
+                    <date ref='latePickupDateTime' required v-model="entityData.latePickupDateTime" title='TG đến  muộn nhất'/>
                     </div>
                     
                 </div>
                 <div class='flex mb-12-px '>
 
                     <div class="w-200-px mr-8-px">
-                    <date v-model="entityData.earlyDeliveryDateTime" title='TG vận chuyển sớm nhất'/>
+                    <date ref='earlyDeliveryDateTime' required v-model="entityData.earlyDeliveryDateTime" title='TG vận chuyển sớm nhất'/>
                     </div>
                     <div class='w-200-px'>
-                    <date v-model="entityData.lateDeliveryDateTime" title='TG vận chuyển muộn nhất'/>
+                    <date ref='lateDeliveryDateTime' required  v-model="entityData.lateDeliveryDateTime" title='TG vận chuyển muộn nhất'/>
                     </div>
                     
                 </div>
@@ -67,7 +67,7 @@
                     </div>
                     <div class='w-200-px'>
 
-                    <t-input type="number" v-model="entityData.weight" title='Trọng tải (tấn)'/>
+                    <t-input type="number" ref='weight' required  v-model="entityData.weight" title='Trọng tải (tấn)'/>
                     </div>
                     
                 </div>
@@ -107,6 +107,7 @@ export default {
   },
   data() {
     return {
+      error: null,
       marker: [],
       address: "ha noi",
       code: "00102",
@@ -126,6 +127,78 @@ export default {
     // this.loadDepot();
   },
   methods: {
+    //Validate
+    validate() {
+      var data = this.entityData;
+      if (
+        data.code == undefined ||
+        data.code == null ||
+        data.code.trim() == ""
+      ) {
+        this.error = "Mã không được bỏ trống";
+        this.$refs.code.setError(this.error);
+        return false;
+      }
+      //Thời gian
+
+      if (
+        data.earlyPickupDateTime == undefined ||
+        data.earlyPickupDateTime == null
+      ) {
+        this.error = "TG đến sớm nhất không được bỏ trống";
+
+        return false;
+      }
+      if (
+        data.latePickupDateTime == undefined ||
+        data.latePickupDateTime == null
+      ) {
+        this.error = "TG đến  muộn nhất không được bỏ trống";
+
+        return false;
+      }
+      if (
+        data.earlyDeliveryDateTime == undefined ||
+        data.earlyDeliveryDateTime == null
+      ) {
+        this.error = "TG vận chuyển sớm nhất không được bỏ trống";
+
+        return false;
+      }
+      if (
+        data.lateDeliveryDateTime == undefined ||
+        data.lateDeliveryDateTime == null
+      ) {
+        this.error = "TG vận chuyển muộn nhất không được bỏ trống";
+
+        return false;
+      }
+
+      if (data.warehouseCode == undefined || data.warehouseCode == null) {
+        this.error = "Kho không được bỏ trống";
+
+        return false;
+      }
+      if (data.containerCode == undefined || data.containerCode == null) {
+        this.error = "Container không được bỏ trống";
+        return false;
+      }
+
+      //Cảng, trọng tải ==>> yêu cầu  isPorrt
+      if (this.isPort) {
+        if (data.portCode == undefined || data.portCode == null) {
+          this.error = "Cảng không được bỏ trống";
+
+          return false;
+        }
+        if (data.weight == undefined || data.weight == null) {
+          this.error = "Trọng tải không được bỏ trống";
+          this.$refs.weight.setError(this.error);
+          return false;
+        }
+      }
+      return true;
+    },
     onSelectedContainer(data) {},
     //Chonj doi tuong
     onSelectedPort(data) {
@@ -159,15 +232,32 @@ export default {
       var div = ` <div class="info-detail">
       <div class="row-detail flex">
         <div class="title-lable">
-          <div>Mã:</div>
-          <div>Tên:</div>
-          <div>Địa chỉ:</div>
+        Mã: 
         </div>
-        <div class="row-content">
-          <div>${content.code}</div>
-          <div>${content.name}</div>
-          <div>${content.address}</div>
+         <div class="row-content">
+          ${content.code}
+         </div>
+        
         </div>
+      <div class="row-detail flex">
+        <div class="title-lable">
+        Tên: 
+        </div>
+         <div class="row-content">
+          ${content.name || ""}
+         </div>
+        
+        </div>
+      <div class="row-detail flex">
+        <div class="title-lable">
+        Địa chỉ: 
+        </div>
+         <div class="row-content">
+          ${content.address}
+         </div>
+        
+        </div>
+       
       </div>
     </div>`;
       var infowindow = new google.maps.InfoWindow({
@@ -185,8 +275,7 @@ export default {
 
       me.loadDepot();
     },
-    selectedEvent(data) {
-    },
+    selectedEvent(data) {},
 
     loadDepot() {
       var me = this,

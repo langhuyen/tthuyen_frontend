@@ -33,6 +33,7 @@
       <div class="flex" style="height:437px">
         <div style="height:390px" class="w-1/2 mr-12-px">
           <datatable
+            :load="load"
             @activeIndex="changePageIndex"
             :totalPage="totalPage"
             @select="selectedTable"
@@ -193,15 +194,32 @@ export default {
       var div = ` <div class="info-detail">
       <div class="row-detail flex">
         <div class="title-lable">
-          <div>Mã:</div>
-          <div>Tên:</div>
-          <div>Địa chỉ:</div>
+        Mã: 
         </div>
-        <div class="row-content">
-          <div>${content.code}</div>
-          <div>${content.name}</div>
-          <div>${content.address}</div>
+         <div class="row-content">
+          ${content.code}
+         </div>
+        
         </div>
+      <div class="row-detail flex">
+        <div class="title-lable">
+        Tên: 
+        </div>
+         <div class="row-content">
+          ${content.name || ""}
+         </div>
+        
+        </div>
+      <div class="row-detail flex">
+        <div class="title-lable">
+        Địa chỉ: 
+        </div>
+         <div class="row-content">
+          ${content.address}
+         </div>
+        
+        </div>
+       
       </div>
       <a id='${id}'>Click</a> và sau đó di kéo thả marker
       để thay đổi vị trí của các depot
@@ -211,6 +229,10 @@ export default {
         maxWidth: 350
       });
       infowindow.open(marker.getMap(), marker);
+
+      google.maps.event.addListener(marker.getMap(), "click", function() {
+        infowindow.close();
+      });
       me.$nextTick(function() {
         var infoDiv = document.getElementById(id);
         if (infoDiv != null) {
@@ -222,9 +244,6 @@ export default {
             false
           );
         }
-      });
-      google.maps.event.addListener(marker.getMap(), "click", function() {
-        infowindow.close();
       });
     },
     onChangePosition(marker, infowindow) {

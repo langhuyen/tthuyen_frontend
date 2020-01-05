@@ -5,19 +5,29 @@
         <img src="@/assets/logo.png" alt />
       </div>
       <div class="title mb-12-px">Đăng Ký</div>
+      <div class="sub-title">
+        <a @click="redirect('/login')">Đăng nhập</a> để sử dụng TM.com
+      </div>
       <div class="error mt-12-px" v-if="error">{{error}}</div>
       <div class="register-form">
         <div class="mb-12-px">
-          <t-input v-model="user.username" placeholder="Tên" title="Tên đăng nhập" />
+          <t-input ref="username" v-model="user.username" placeholder="Tên" title="Tên đăng nhập" />
         </div>
         <div class="mb-12-px">
-          <t-input v-model="user.email" placeholder="Email" title="Email" />
-        </div>
-        <div class="mb-12-px">
-          <t-input v-model="user.password" placeholder="Mật khẩu" title="Mật khẩu" type="password" />
+          <t-input ref="email" v-model="user.email" placeholder="Email" title="Email" />
         </div>
         <div class="mb-12-px">
           <t-input
+            ref="password"
+            v-model="user.password"
+            placeholder="Mật khẩu"
+            title="Mật khẩu"
+            type="password"
+          />
+        </div>
+        <div class="mb-12-px">
+          <t-input
+            ref="passwordRepeat"
             v-model="user.passwordRepeat"
             placeholder="Mật khẩu"
             title="Xác nhận mật khẩu"
@@ -69,24 +79,41 @@ export default {
         data = me.user;
       if (me.emptyObject(data.username)) {
         this.error = "Tên đăng nhập không được để trống";
+        this.$refs.username.setError(this.error);
         return false;
       }
       if (me.emptyObject(data.email)) {
         this.error = "Email không được để trống";
+        this.$refs.email.setError(this.error);
         return false;
       }
       if (me.emptyObject(data.password)) {
         this.error = "Mật khẩu không được để trống";
+        this.$refs.password.setError(this.error);
         return false;
       }
       if (data.password !== data.passwordRepeat) {
         this.error = "Mật khẩu không khớp nhau";
+        this.$refs.passwordRepeat.setError(this.error);
         return false;
       }
+      if (me.validateEmail(data.email)) {
+        this.error = "Email không hợp lệ.";
+        this.$refs.email.setError(this.error);
+        return false;
+      }
+
       return true;
+    },
+    validateEmail(email) {
+      var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return !re.test(String(email).toLowerCase());
     },
     emptyObject(object) {
       return object == undefined || object == null || object.trim() == "";
+    },
+    redirect(url) {
+      this.$router.push(url);
     }
   }
 };

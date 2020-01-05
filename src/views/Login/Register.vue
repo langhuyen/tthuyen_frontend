@@ -43,6 +43,9 @@ export default {
     if (userId) {
       this.registerForm = confirmForm;
       this.step = 2;
+    } else {
+      this.registerForm = registerForm;
+      this.step = 1;
     }
   },
   data() {

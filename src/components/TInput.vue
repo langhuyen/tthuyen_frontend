@@ -1,6 +1,6 @@
 <template lang="html">
     <div class='t-input'>
-        <div v-if='title' class="t-title mb-8-px">
+        <div v-if='title' :title='title' class="t-title mb-8-px">
             {{title}}
         </div>
         <div class='t-content'>
@@ -22,7 +22,7 @@ export default {
       type: String
     },
     value: {
-      type: String
+      type: [String, Number]
       // required: true
     },
     required: {
@@ -60,7 +60,10 @@ export default {
     },
     onBlur(e) {
       this.focus = false;
-      if (this.required && this.valueInput.trim().length == 0) {
+      if (
+        this.required &&
+        (!this.valueInput || this.valueInput.trim().length == 0)
+      ) {
         this.setError(this.title + " Không được bỏ trống");
       }
     },
